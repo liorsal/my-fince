@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול תקציב</title>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1E1E1E;
+      --text: #ffffff;
+      --accent: #00c851;
+      --shadow: rgba(0, 0, 0, 0.2);
+      --input-bg: #e0e0e0;
+      --input-text: #000000;
+    }
+    html.light-theme {
+      --bg: #ffffff;
+      --card-bg: #f1f1f1;
+      --text: #000000;
+      --input-bg: #e0e0e0;
+      --input-text: #000000;
+      --accent: #00796b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      padding: 20px;
+      transition: background 0.3s, color 0.3s;
+      direction: rtl;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+    .theme-toggle {
+      background: var(--text); 
+      border: none;
+      border-radius: 50%; 
+      width: 2rem; 
+      height: 2rem; 
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    #statusText {
+      margin-top: 15px;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    #chart-container, #history-container {
+      width: 100%; max-width: 300px; margin: auto;
+    }
+    #chart-container {
+      margin: 30px auto;
+      padding: 20px 0;
+      position: relative;
+    }
+    .actions {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      margin-top: 15px;
+    }
+    .actions input, .actions button, .actions select {
+      padding: 10px; border: none; border-radius: 4px; font-size: 1rem;
+      background: var(--input-bg, #1e1e1e);
+      color: var(--input-text, var(--text));
+    }
+    .actions button {
+      background: var(--accent); cursor: pointer; font-weight: bold;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .actions button:hover { opacity: 0.9; }
+    #transactions {
+      list-style: none; margin-top: 10px; max-height: 200px; overflow-y: auto;
+    }
+    #transactions li {
+      padding: 10px; 
+      border-bottom: 1px solid var(--text); 
+      opacity: 0.2;
+      display: flex;
+      justify-content: space-between; 
+      align-items: center;
+    }
+    #transactions li span {
+      color: var(--text);
+      opacity: 0.7;
+    }
+    .toast {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: #ff4444; color: #fff; padding: 10px 20px; border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3); opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .toast.show { opacity: 1; pointer-events: auto; }
+    footer { text-align: center; margin-top: 30px; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ניהול תקציב</h1>
+    <button id="themeToggle" class="theme-toggle">
+      <span style="display:none;">מעבר מצב</span>
+    </button>
+  </header>
+  <section class="card">
+    <div class="actions">
+      <input type="text" id="expenseDescInput" placeholder="תיאור הוצאה">
+      <input type="number" id="expenseInput" placeholder="סכום הוצאה" min="0">
+      <button id="addExpenseBtn">➕ הוסף הוצאה</button>
+    </div>
+    <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
+    <div id="chart-container">
+      <canvas id="expenseChart"></canvas>
+      <p id="statusText">0 מתוך 0 ₪</p>
+    </div>
+    <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
+    <!-- budget and general actions -->
+    <div class="actions">
+      <input type="number" id="maxInput" placeholder="הגדר מקסימום" min="0">
+      <button id="setMaxBtn">🧾 הגדר תקציב</button>
+      <button id="resetBtn">🔄 איפוס</button>
+      <button id="exportBtn">📤 ייצא CSV</button>
+    </div>
+  </section>
+  <section class="card">
+    <h2>תנועות אחרונות</h2>
+    <ul id="transactions"></ul>
+  </section>
+  <section class="card" id="history-container">
+    <h2>הוצאות לאורך זמן</h2>
+    <canvas id="historyChart"></canvas>
+  </section>
+  <div id="toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // data & storage
+    let maxBudget = 0, current = 0;
+    let transactions = [];
+    function saveData() {
+      localStorage.setItem('budgetData', JSON.stringify({maxBudget, transactions}));
+    }
+    function loadData() {
+      const saved = JSON.parse(localStorage.getItem('budgetData'));
+      if(saved) {
+        maxBudget = saved.maxBudget;
+        transactions = saved.transactions;
+        current = transactions.filter(t=>t.type==='expense').reduce((sum,t)=>sum+t.amount,0);
+      }
+    }
+    // setup charts
+    const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+    const historyCtx = document.getElementById('historyChart').getContext('2d');
+    const data = { datasets:[{data:[0,0], backgroundColor:['var(--accent)', '#424242'], borderWidth:0}]};
+    const options = { cutout:'70%', responsive:true, animation:{duration:800,easing:'easeOutQuart'}, plugins:{legend:{display:false}, tooltip:{enabled:true}} };
+    const centerTextPlugin = { 
+      id:'centerText', 
+      beforeDraw(chart) { 
+        const{ctx,chartArea:{width,height,left,top}}=chart; 
+        ctx.save(); 
+        ctx.font='bold 20px Assistant'; 
+        // Use current computed style to get the latest text color
+        ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text'); 
+        ctx.textAlign='center'; 
+        ctx.textBaseline='middle'; 
+        ctx.fillText(`${current}/${maxBudget}`, left+width/2, top+height/2); 
+        ctx.restore(); 
+      } 
+    };
+    const expenseChart = new Chart(expenseCtx,{type:'doughnut',data:data,options:options,plugins:[centerTextPlugin]});
+    const historyChart = new Chart(historyCtx,{type:'line',data:{labels:[],datasets:[{label:'הוצאות',data:[],borderColor:getComputedStyle(document.documentElement).getPropertyValue('--accent'),backgroundColor:'transparent'}]},options:{responsive:true}});
+    // UI elements
+    const transactionsList = document.getElementById('transactions');
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    function updateStatusText() { document.getElementById('statusText').textContent=`${current} מתוך ${maxBudget} ₪`; }
+    function updateTransactionsList() {
+      transactionsList.innerHTML='';
+      transactions.slice(-5).reverse().forEach(t=>{
+        const li=document.createElement('li');
+        const dt = t.date ? t.date.replace('T', ' ') : 'תאריך לא ידוע';
+        li.innerHTML=`${t.type==='expense'?'💸':'💰'} ${t.desc} – ${t.amount}₪ <span style='font-size:0.8rem'>(${dt})</span>`;
+        transactionsList.append(li);
+      });
+    }
+    function updateExpenseChart() { const p=Math.min(Math.max(current/maxBudget,0),1); const red=Math.floor(p*255),green=Math.floor((1-p)*255); expenseChart.data.datasets[0].data=[current,Math.max(maxBudget-current,0)]; expenseChart.data.datasets[0].backgroundColor[0]=`rgb(${red},${green},0)`; expenseChart.update(); }
+    function updateHistoryChart() { const filtered=transactions.filter(t=>t.type==='expense'); const daily={}; filtered.forEach(t=>{ daily[t.date]=(daily[t.date]||0)+t.amount; }); const dates=Object.keys(daily).sort(); historyChart.data.labels=dates; historyChart.data.datasets[0].data=dates.map(d=>daily[d]); historyChart.update(); }
+    function updateAll() { updateStatusText(); updateExpenseChart(); updateTransactionsList(); updateHistoryChart(); }
+    // events
+    document.getElementById('setMaxBtn').addEventListener('click',()=>{ const val=+document.getElementById('maxInput').value; if(val>0){ maxBudget=val; current=0; transactions=[]; saveData(); updateAll(); showToast('תקציב הוגדר!'); }});
+    document.getElementById('addExpenseBtn').addEventListener('click', () => {
+      const desc = document.getElementById('expenseDescInput').value.trim();
+      // Get current time in Israel timezone
+      const now = new Date();
+      // Format manually to avoid timezone issues
+      const pad = num => String(num).padStart(2, '0');
+      const year = now.getFullYear();
+      const month = pad(now.getMonth() + 1);
+      const day = pad(now.getDate());
+      const hours = pad(now.getHours());
+      const minutes = pad(now.getMinutes());
+      const dateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+      const val = +document.getElementById('expenseInput').value;
+      if (desc && val > 0) {
+        const t = { type: 'expense', amount: val, desc, date: dateTime };
+        transactions.push(t);
+        current += val;
+        saveData();
+        updateAll();
+        showToast(current > maxBudget ? 'חרגת מהתקציב!' : 'הוצאה נוספה!');
+        document.getElementById('expenseDescInput').value = '';
+        document.getElementById('expenseInput').value = '';
+      } else {
+        showToast('אנא מלא תיאור וסכום');
+      }
+    });
+    document.getElementById('resetBtn').addEventListener('click',()=>{ current=0; transactions=[]; saveData(); updateAll(); });
+    document.getElementById('exportBtn').addEventListener('click',()=>{ let csv='type,desc,amount,date\n'; transactions.forEach(t=>csv+=`${t.type},${t.desc},${t.amount},${t.date}\n`); const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='transactions.csv'; a.click(); URL.revokeObjectURL(url); });
+    document.getElementById('themeToggle').addEventListener('click',()=>{
+      document.documentElement.classList.toggle('light-theme');
+      // Update charts to reflect theme change
+      updateAll();
+    });
+    // Create backup & restore buttons and add them to the actions
+    const actionsDiv = document.querySelector('.actions:last-of-type');
+    
+    const backupBtn = document.createElement('button');
+    backupBtn.textContent = '💾 גיבוי';
+    backupBtn.addEventListener('click', () => {
+      // Create JSON backup of all data
+      const backupData = JSON.stringify({maxBudget, transactions});
+      const blob = new Blob([backupData], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'budget_backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('גיבוי נוצר בהצלחה!');
+    });
+    actionsDiv.appendChild(backupBtn);
+    
+    const restoreBtn = document.createElement('button');
+    restoreBtn.textContent = '📂 שחזור';
+    restoreBtn.addEventListener('click', () => {
+      // Create a file input element
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.json';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+          document.body.removeChild(fileInput);
+          return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data && data.maxBudget !== undefined && Array.isArray(data.transactions)) {
+              maxBudget = data.maxBudget;
+              transactions = data.transactions;
+              current = transactions.filter(t=>t.type==='expense').reduce((sum,t)=>sum+t.amount,0);
+              saveData();
+              updateAll();
+              showToast('נתונים שוחזרו בהצלחה!');
+            } else {
+              showToast('פורמט קובץ לא תקין!');
+            }
+          } catch (err) {
+            showToast('שגיאה בשחזור הנתונים!');
+          }
+          document.body.removeChild(fileInput);
+        };
+        reader.readAsText(file);
+      });
+      
+      fileInput.click();
+    });
+    actionsDiv.appendChild(restoreBtn);
+    // init
+    loadData(); updateAll();
+  </script>
+  <footer>© 2023 ניהול תקציב</footer>
+  <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
+    הנתונים נשמרים אוטומטית במכשיר שלך. גם אם תסגור את הדף, המידע יישמר.
+  </p>
+</body>
+</html> 
