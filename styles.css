@@ -108,8 +108,8 @@ h1 {
   box-shadow: var(--shadow);
   padding: var(--card-padding);
   margin: 0 auto var(--card-gap) auto;
-  max-width: 900px;
-  width: 95%;
+  max-width: 600px; /* Limit width for better appearance */
+  width: 100%;
   transition: background 0.4s;
 }
 
@@ -126,8 +126,12 @@ h1 {
 .status-red { color: #ff4444; }
 
 #chart-container {
-  width: 100%; max-width: 280px; margin: 0 auto 10px auto;
-  display: flex; flex-direction: column; align-items: center;
+  width: 100%; 
+  max-width: 280px; 
+  margin: 0 auto 10px auto;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
   position: relative;
 }
 
@@ -272,6 +276,9 @@ h1 {
   margin-top: 10px;
   padding: 0;
   list-style: none;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .expense-item {
@@ -284,6 +291,9 @@ h1 {
   color: var(--text);
   position: relative;
   min-width: 0;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .expense-item .expense-icon {
@@ -684,6 +694,9 @@ canvas {
   align-items: center;
   flex: 1;
   min-width: 120px;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Header controls & Settings Menu */
@@ -872,6 +885,7 @@ body .settings-menu.active {
   padding: 0 12px;
   position: relative;
   padding-bottom: 60px;
+  justify-content: center; /* Center content horizontally */
 }
 
 .left-panel {
@@ -1003,6 +1017,8 @@ body .settings-menu.active {
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 600px; /* Limit width for better readability */
+  margin: 0 auto; /* Center within parent */
 }
 
 /* Remove the temporary debug styles for settings menu */
@@ -1329,5 +1345,42 @@ body {
     background: var(--bg-gradient);
     min-height: 100vh;
     height: 100%;
+  }
+}
+
+/* Additional centering styles */
+h2 {
+  text-align: center;
+}
+
+#chart-container {
+  width: 100%; 
+  max-width: 280px; 
+  margin: 0 auto 10px auto;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  position: relative;
+}
+
+.expense-item, .fixed-expense-input-group, #addFixedExpenseForm {
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.expense-list {
+  display: flex; flex-direction: column; gap: var(--expense-list-gap);
+  margin-top: 10px;
+  padding: 0;
+  list-style: none;
+  max-width: 550px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 767px) {
+  .expense-item, .expense-list, .fixed-expense-input-group, #addFixedExpenseForm {
+    max-width: 100%;
   }
 } 
