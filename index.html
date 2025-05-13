@@ -67,16 +67,6 @@
     #chart-container, #history-container {
       width: 100%; max-width: 300px; margin: auto;
     }
-    #category-container {
-      width: 300px;
-    }
-    .chart-flex {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      align-items: center;
-    }
     .actions {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
       margin-top: 15px;
@@ -119,8 +109,12 @@
 <body>
   <header>
     <h1>ניהול תקציב</h1>
-    <button id="themeToggle" class="theme-toggle">
-      <span style="display:none;">מעבר מצב</span>
+    <!-- Link to categories page -->
+    <a href="categories.html" class="theme-toggle" title="גרפי קטגוריות">
+      <span>📊</span>
+    </a>
+    <button id="themeToggle" class="theme-toggle" title="מעבר מצב">
+      <span>🌓</span>
     </button>
   </header>
   <section class="card">
@@ -141,15 +135,11 @@
       <button id="addExpenseBtn">➕ הוסף הוצאה</button>
     </div>
     <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
-    <div class="chart-flex">
-      <div id="chart-container">
-        <p id="capitalText">ההון שלך הוא: 0 ₪</p>
-        <canvas id="expenseChart"></canvas>
-        <p id="statusText">0 מתוך 0 ₪</p>
-      </div>
-      <div id="category-container">
-        <canvas id="categoryChart"></canvas>
-      </div>
+    <!-- Main chart -->
+    <div id="chart-container">
+      <p id="capitalText">ההון שלך הוא: 0 ₪</p>
+      <canvas id="expenseChart"></canvas>
+      <p id="statusText">0 מתוך 0 ₪</p>
     </div>
     <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
     <!-- budget and general actions -->
@@ -165,10 +155,6 @@
   <section class="card">
     <h2>תנועות אחרונות</h2>
     <ul id="transactions"></ul>
-  </section>
-  <section class="card" id="history-container">
-    <h2>הוצאות לאורך זמן</h2>
-    <canvas id="historyChart"></canvas>
   </section>
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -190,8 +176,6 @@
     }
     // setup charts
     const expenseCtx = document.getElementById('expenseChart').getContext('2d');
-    const historyCtx = document.getElementById('historyChart').getContext('2d');
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
     const data = { datasets:[{data:[0,0], backgroundColor:['var(--accent)', '#424242'], borderWidth:0}]};
     const options = { cutout:'70%', responsive:true, animation:{duration:800,easing:'easeOutQuart'}, plugins:{legend:{display:false}, tooltip:{enabled:true}} };
     const centerTextPlugin = { 
@@ -209,10 +193,6 @@
       } 
     };
     const expenseChart = new Chart(expenseCtx,{type:'doughnut',data:data,options:options,plugins:[centerTextPlugin]});
-    const historyChart = new Chart(historyCtx,{type:'line',data:{labels:[],datasets:[{label:'הוצאות',data:[],borderColor:getComputedStyle(document.documentElement).getPropertyValue('--accent'),backgroundColor:'transparent'}]},options:{responsive:true}});
-    const categories = ['שכר דירה','חשבונות','דלק','גז (גפ״מ)','אוכל','בילויים','ביגוד','פינוקים','כללי'];
-    const categoryData = { labels: categories, datasets:[{label:'הוצאות לפי קטגוריה',data:categories.map(()=>0),backgroundColor:categories.map(()=>getComputedStyle(document.documentElement).getPropertyValue('--accent'))}]};
-    const categoryChart = new Chart(categoryCtx,{type:'bar',data:categoryData,options:{responsive:true,scales:{y:{beginAtZero:true}}}});
     // UI elements
     const transactionsList = document.getElementById('transactions');
     const categorySelect = document.getElementById('categorySelect');
@@ -228,7 +208,8 @@
     function updateCapitalText() { document.getElementById('capitalText').textContent=`ההון שלך הוא: ${capital} ₪`; }
     function updateTransactionsList() {
       transactionsList.innerHTML='';
-      transactions.slice(-5).reverse().forEach(t=>{
+      // Show all transactions in reverse chronological order
+      transactions.slice().reverse().forEach(t=>{
         const li=document.createElement('li');
         const dt = t.date ? t.date.replace('T', ' ') : 'תאריך לא ידוע';
         li.innerHTML=`${t.type==='expense'?'💸':'💰'} ${t.desc} – ${t.amount}₪ <span style='font-size:0.8rem'>(${dt})</span>`;
@@ -236,15 +217,7 @@
       });
     }
     function updateExpenseChart() { const p=Math.min(Math.max(current/maxBudget,0),1); const red=Math.floor(p*255),green=Math.floor((1-p)*255); expenseChart.data.datasets[0].data=[current,Math.max(maxBudget-current,0)]; expenseChart.data.datasets[0].backgroundColor[0]=`rgb(${red},${green},0)`; expenseChart.update(); }
-    function updateHistoryChart() { const filtered=transactions.filter(t=>t.type==='expense'); const daily={}; filtered.forEach(t=>{ daily[t.date]=(daily[t.date]||0)+t.amount; }); const dates=Object.keys(daily).sort(); historyChart.data.labels=dates; historyChart.data.datasets[0].data=dates.map(d=>daily[d]); historyChart.update(); }
-    function updateCategoryChart() {
-      const sums = {};
-      categories.forEach(c=>sums[c]=0);
-      transactions.filter(t=>t.type==='expense').forEach(t=>{ sums[t.category] = (sums[t.category]||0) + t.amount; });
-      categoryChart.data.datasets[0].data = categories.map(c=>sums[c]);
-      categoryChart.update();
-    }
-    function updateAll() { updateStatusText(); updateCapitalText(); updateExpenseChart(); updateTransactionsList(); updateHistoryChart(); updateCategoryChart(); }
+    function updateAll() { updateStatusText(); updateCapitalText(); updateExpenseChart(); updateTransactionsList(); }
     // events
     document.getElementById('setMaxBtn').addEventListener('click',()=>{ const val=+document.getElementById('maxInput').value; if(val>0){ maxBudget=val; current=0; transactions=[]; saveData(); updateAll(); showToast('תקציב הוגדר!'); }});
     document.getElementById('addExpenseBtn').addEventListener('click', () => {
@@ -357,7 +330,7 @@
     // init
     loadData(); updateAll();
   </script>
-  <footer>© 2023 ניהול תקציב</footer>
+  <footer>© 2025 ניהול תקציב</footer>
   <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
     הנתונים נשמרים אוטומטית במכשיר שלך. גם אם תסגור את הדף, המידע יישמר.
   </p>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>גרפי קטגוריות</title>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1E1E1E;
+      --text: #ffffff;
+      --accent: #00c851;
+      --shadow: rgba(0, 0, 0, 0.2);
+    }
+    html.light-theme {
+      --bg: #ffffff;
+      --card-bg: #f1f1f1;
+      --text: #000000;
+      --accent: #00796b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Assistant', sans-serif;
+      padding: 20px;
+      direction: rtl;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+    }
+    .back-link {
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    #category-charts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    .cat-card {
+      background: var(--card-bg);
+      border-radius: 1rem;
+      padding: 10px;
+      width: 120px;
+      text-align: center;
+      box-shadow: 0 2px 5px var(--shadow);
+    }
+    .cat-title {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+    }
+    .no-cat {
+      text-align: center;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>גרפי קטגוריות</h1>
+    <a href="index.html" class="back-link">← חזרה</a>
+  </header>
+  <!-- Category selection -->
+  <section class="card">
+    <h2>בחר קטגוריות להצגה</h2>
+    <div class="actions" id="categorySelector"></div>
+    <div style="text-align:center; margin-top:10px;">
+      <button id="showCatsBtn">הצג גרפים</button>
+    </div>
+  </section>
+  <section class="card">
+    <div id="category-charts">
+      <p class="no-cat">לא נוספו עדיין קטגוריות - נא להוסיף :)</p>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    let maxBudget = 0;
+    let transactions = [];
+    function loadData() {
+      const saved = JSON.parse(localStorage.getItem('budgetData'));
+      if (saved) {
+        maxBudget = saved.maxBudget;
+        transactions = saved.transactions;
+      }
+    }
+    const categories = ['שכר דירה','חשבונות','דלק','גז (גפ״מ)','אוכל','בילויים','ביגוד','פינוקים','כללי'];
+    window.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      // build category selector
+      const selDiv = document.getElementById('categorySelector');
+      categories.forEach(cat => {
+        const lbl = document.createElement('label');
+        lbl.style.margin = '0 5px';
+        lbl.innerHTML = `<input type="checkbox" value="${cat}"> ${cat}`;
+        selDiv.appendChild(lbl);
+      });
+      // on button click, render selected charts
+      document.getElementById('showCatsBtn').addEventListener('click', () => {
+        const checked = Array.from(selDiv.querySelectorAll('input:checked')).map(i => i.value);
+        const container = document.getElementById('category-charts');
+        container.innerHTML = '';
+        if (!checked.length) {
+          container.innerHTML = '<p class="no-cat">לא נוספו עדיין קטגוריות - נא להוסיף :)</p>';
+          return;
+        }
+        const expenses = transactions.filter(t => t.type === 'expense');
+        checked.forEach((cat, idx) => {
+          const sum = expenses.filter(t => t.category === cat).reduce((s,t) => s+t.amount,0);
+          const card = document.createElement('div'); card.className='cat-card';
+          card.innerHTML = `<p class="cat-title">${cat}</p><canvas id="catChart${idx}"></canvas>`;
+          container.appendChild(card);
+          const ctx = card.querySelector('canvas').getContext('2d');
+          new Chart(ctx, {
+            type: 'doughnut',
+            data: { datasets:[{ data:[sum,Math.max(maxBudget-sum,0)], backgroundColor:['var(--accent)',' #424242'], borderWidth:0 }] },
+            options: { cutout:'70%', responsive:true, plugins:{legend:{display:false}, tooltip:{enabled:false}} },
+            plugins: [{ id:'centerText', beforeDraw(chart){ const{ctx,chartArea:{width,height,left,top}}=chart; ctx.save(); ctx.font='bold 16px Assistant'; ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text'); ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(`${sum}/${maxBudget}`, left+width/2, top+height/2); ctx.restore(); }}]
+          });
+        });
+      });
+    });
+  </script>
+  <footer>© 2025 ניהול תקציב</footer>
+</body>
+</html> 
