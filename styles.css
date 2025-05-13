@@ -1434,4 +1434,31 @@ h2 {
 .selector-btn.selected {
   background: #000 !important;
   color: #fff !important;
+}
+
+/* Category selector button base style */
+.selector-btn {
+  background: var(--card-bg);
+  color: var(--text);
+  border: 1px solid var(--accent);
+  border-radius: var(--btn-radius);
+  padding: 8px 12px;
+  margin: 4px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Category budget input fields and buttons */
+.cat-budget-input input {
+  width: 60px;
+  height: 40px;
+  font-size: 1rem;
+  padding: 6px 8px;
+  border-radius: var(--input-radius);
+}
+.cat-budget-input button,
+.set-budget-btn {
+  min-height: 40px;
+  font-size: 1rem;
+  padding: 6px 10px;
 } 
