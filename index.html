@@ -10,13 +10,19 @@
   <style>
     /* Toggle button styles with dots instead of icons */
     .cat-toggle, .theme-toggle, .settings-toggle {
-      width: 2.1rem; height: 2.1rem; border-radius: 50%; border: none;
+      width: 44px; 
+      height: 44px; 
+      border-radius: 50%; 
+      border: none;
       cursor: pointer;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
       margin-left: 0.7rem;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
       transition: background 0.3s;
       -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
+      aspect-ratio: 1 / 1; /* שמירה על עיגול מושלם */
     }
     
     .theme-toggle { 
@@ -26,8 +32,8 @@
     .theme-toggle::after {
       content: "";
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: white;
     }
@@ -39,19 +45,27 @@
     .cat-toggle::after {
       content: "";
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: white;
     }
     
     .settings-toggle { 
       background: #1976d2; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .settings-toggle i { 
       color: #fff; 
-      font-size: 1.2rem; 
+      font-size: 1.3rem; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
     }
     
     /* Light theme adjustments for toggle buttons */
@@ -67,8 +81,8 @@
     /* Mobile improvements */
     @media (max-width: 500px) {
       .cat-toggle, .theme-toggle, .settings-toggle {
-        width: 2.4rem;
-        height: 2.4rem;
+        width: 44px;
+        height: 44px;
         margin-left: 0.9rem;
       }
 
@@ -290,6 +304,19 @@
     
     // Update on resize
     window.addEventListener('resize', setViewportHeight);
+    
+    // Fix scroll issues
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add extra space at the bottom to allow scrolling
+      const contentHeight = document.body.offsetHeight;
+      const viewportHeight = window.innerHeight;
+      const footer = document.querySelector('footer');
+      
+      // If content is too short, add padding to ensure scrollability
+      if (contentHeight <= viewportHeight && footer) {
+        footer.style.marginTop = Math.max(100, viewportHeight - contentHeight - 50) + 'px';
+      }
+    });
   </script>
   <style>
     /* Improved mobile responsiveness */
