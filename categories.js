@@ -639,4 +639,23 @@ document.addEventListener('DOMContentLoaded', () => {
   
   window.addEventListener('resize', optimizeChartsForMobile);
   document.addEventListener('DOMContentLoaded', optimizeChartsForMobile);
+
+  // Set total budget button
+  const setMaxBtn = document.getElementById('setMaxBtn');
+  if (setMaxBtn) {
+    setMaxBtn.addEventListener('click', function() {
+      const maxInputEl = document.getElementById('maxInput');
+      const newMax = parseInt(maxInputEl.value) || 0;
+      totalBudget = newMax;
+      // Persist in localStorage
+      const existing = JSON.parse(localStorage.getItem('budgetData')) || {};
+      existing.maxBudget = totalBudget;
+      existing.transactions = existing.transactions || transactions;
+      existing.categoryBudgets = categoryBudgets;
+      localStorage.setItem('budgetData', JSON.stringify(existing));
+      // Refresh displays
+      updateBudgetDisplay();
+      showToast(`התקציב הכולל הוגדר ל-${totalBudget} ₪`);
+    });
+  }
 }); 
