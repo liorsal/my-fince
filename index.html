@@ -67,6 +67,7 @@
       padding: 24px 0 0 0;
       direction: rtl;
       transition: background 0.5s, color 0.5s;
+      overflow-x: hidden;
     }
     header {
       display: flex; justify-content: flex-start; align-items: center;
@@ -175,10 +176,16 @@
       background: var(--btn-hover);
       transform: scale(1.02);
     }
-    .actions-bar {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+    .actions-container {
       margin-top: 15px;
       position: relative;
+      width: 100%;
+    }
+    .actions-bar {
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: center; 
+      gap: 10px;
     }
     .action-btn {
       background: var(--neutral);
@@ -273,7 +280,7 @@
       .add-expense-card { padding: 12px 4px 8px 4px; }
     }
     @media (max-width: 500px) {
-      .actions-bar { flex-wrap: nowrap; overflow-x: auto; gap: 7px; }
+      .actions-container { flex-wrap: nowrap; overflow-x: auto; gap: 7px; }
       .more-btn { min-width: 120px; }
       .dropdown {
         display: none;
@@ -308,6 +315,372 @@
       z-index: 1000;
     }
     .toast.show { opacity: 1; pointer-events: auto; }
+
+    /* Responsive improvements */
+    .card {
+      max-width: 800px;
+      width: 95%;
+      box-sizing: border-box;
+    }
+
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 767px) {
+      :root {
+        --card-padding: 20px 15px 15px 15px;
+        --card-gap: 20px;
+        --header-size: 1.8rem;
+        --header-icon-size: 1.6rem;
+        --status-size: 1.1rem;
+        --btn-font-size: 0.95rem;
+        --expense-icon-size: 1.1rem;
+      }
+
+      #chart-container {
+        max-width: 90vw;
+        margin: 1rem auto;
+      }
+
+      .add-expense-card {
+        padding: 15px 10px;
+        max-width: 100%;
+      }
+
+      .header-icon {
+        margin-left: 6px;
+      }
+
+      .card {
+        padding: var(--card-padding);
+        border-radius: 1.2rem;
+      }
+    }
+
+    @media (max-width: 500px) {
+      :root {
+        --header-size: 1.5rem;
+        --header-icon-size: 1.4rem;
+        --status-size: 1rem;
+        --btn-font-size: 0.9rem;
+      }
+
+      header {
+        padding: 0 10px;
+        margin-bottom: 15px;
+        gap: 8px;
+      }
+
+      .card {
+        padding: 15px 10px;
+        border-radius: 1rem;
+        margin-bottom: 15px;
+      }
+
+      h1 {
+        font-size: clamp(1.4rem, 5vw, 1.8rem);
+      }
+
+      h2 {
+        font-size: clamp(1.2rem, 4vw, 1.4rem);
+        margin-bottom: 12px !important;
+      }
+
+      .add-expense-card {
+        padding: 12px 8px 8px 8px;
+      }
+
+      .add-expense-row input, 
+      .add-expense-row select {
+        padding: 8px;
+        font-size: 0.95rem;
+      }
+
+      #addFixedExpenseForm {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #addFixedExpenseForm input, 
+      #addFixedExpenseForm .icon-emoji {
+        width: 100%;
+      }
+
+      #addFixedExpenseForm button {
+        margin-top: 8px;
+      }
+
+      .expense-item {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+        flex-wrap: wrap;
+      }
+
+      .expense-item .expense-date {
+        width: 100%;
+        margin-top: 5px;
+        text-align: right;
+      }
+
+      .actions-container {
+        overflow: hidden;
+        padding-bottom: 5px;
+      }
+
+      .actions-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        justify-content: flex-start;
+        gap: 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .actions-bar::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      .actions-bar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+      }
+
+      .actions-bar input {
+        flex: 0 0 100px;
+      }
+
+      .action-btn {
+        flex: 0 0 auto;
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 380px) {
+      :root {
+        --header-size: 1.3rem;
+        --header-icon-size: 1.2rem;
+        --btn-font-size: 0.85rem;
+      }
+
+      header {
+        padding: 0 8px;
+        gap: 5px;
+      }
+
+      .card {
+        width: 98%;
+        padding: 12px 8px;
+      }
+
+      .status-budget {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Animations for mobile UX */
+    @keyframes slideIn {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .card {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+
+    .card:nth-child(2) {
+      animation-delay: 0.05s;
+    }
+
+    .card:nth-child(3) {
+      animation-delay: 0.1s;
+    }
+
+    /* Fixed expense form improvements */
+    .fixed-expense-form {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .fixed-expense-input-group {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 120px;
+    }
+
+    /* Header controls & Settings Menu */
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: auto;
+    }
+
+    .settings-toggle {
+      width: 2.1rem; height: 2.1rem; border-radius: 50%; border: none;
+      background: #1976d2; 
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .settings-toggle i { 
+      color: #fff; 
+      font-size: 1.2rem; 
+    }
+
+    .settings-toggle:hover {
+      background: var(--accent);
+    }
+
+    .settings-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-out;
+    }
+
+    .settings-menu.active {
+      display: flex !important;
+      transform: translateX(0) !important;
+    }
+
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+
+    .settings-header h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--accent);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .settings-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 15px;
+    }
+
+    .settings-group:last-child {
+      border-bottom: none;
+    }
+
+    .settings-group h3 {
+      font-size: 1.1rem;
+      margin: 0 0 10px 0;
+      color: var(--accent);
+    }
+
+    .settings-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .settings-row input {
+      flex: 1;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      color: var(--input-text);
+      padding: 8px 10px;
+      font-size: 0.95rem;
+    }
+
+    .action-btn.full-width {
+      width: 100%;
+      justify-content: flex-start;
+      margin-bottom: 5px;
+    }
+
+    /* Backdrop for settings menu */
+    .backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    @media (max-width: 500px) {
+      .fixed-expense-form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .fixed-expense-input-group {
+        display: flex;
+        width: 100%;
+        align-items: center;
+      }
+
+      .fixed-expense-input-group input {
+        flex: 1;
+      }
+
+      #addFixedExpenseBtn {
+        width: 100%;
+      }
+
+      .settings-menu {
+        width: 85%;
+      }
+    }
   </style>
 </head>
 <body>
@@ -315,8 +688,11 @@
   <header>
     <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
     <h1>ניהול תקציב</h1>
-    <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"><i class="fas fa-th-large"></i></a>
-    <button id="themeToggle" class="theme-toggle" title="מעבר מצב"><i class="fas fa-moon"></i></button>
+    <div class="header-controls">
+      <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"><i class="fas fa-th-large"></i></a>
+      <button id="themeToggle" class="theme-toggle" title="מעבר מצב"><i class="fas fa-moon"></i></button>
+      <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="console.log('Settings button clicked inline'); document.getElementById('settingsMenu').classList.toggle('active'); document.getElementById('backdrop').classList.toggle('active');"><i class="fas fa-gear"></i></button>
+    </div>
   </header>
   <section class="card">
     <div class="status-budget" id="statusText">0 מתוך 0 ₪</div>
@@ -349,23 +725,6 @@
       </div>
       <button id="addExpenseBtn" class="add-expense-btn"><i class="fas fa-plus"></i> הוסף הוצאה</button>
     </div>
-    <div class="actions-bar" id="actionsBar">
-      <input type="number" id="capitalInput" placeholder="הגדר הון התחלתי" min="0" style="max-width:120px;">
-      <button id="setCapitalBtn" class="action-btn"><i class="fas fa-coins"></i> הגדר הון</button>
-      <input type="number" id="maxInput" placeholder="הגדר מקסימום" min="0" style="max-width:120px;">
-      <button id="setMaxBtn" class="action-btn"><i class="fas fa-wallet"></i> הגדר תקציב</button>
-      <button id="resetBtn" class="action-btn"><i class="fas fa-undo"></i> איפוס</button>
-      <button id="exportBtn" class="action-btn"><i class="fas fa-file-csv"></i> ייצא CSV</button>
-      <button id="backupBtn" class="action-btn"><i class="fas fa-save"></i> גיבוי</button>
-      <button id="restoreBtn" class="action-btn"><i class="fas fa-folder-open"></i> שחזור</button>
-      <button id="moreBtn" class="more-btn" style="background:#222;width:2.1rem;height:2.1rem;min-width:2.1rem;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;"><i class="fas fa-gear" style="color:#fff;font-size:1.3rem;"></i></button>
-      <div class="popup-menu" id="popupMenu" style="display:none;position:absolute;right:0;top:120%;background:var(--card-bg);border-radius:1.1rem;box-shadow:0 4px 16px rgba(0,0,0,0.18);z-index:1002;min-width:160px;flex-direction:column;overflow:hidden;">
-        <button id="resetBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-undo"></i> איפוס</button>
-        <button id="exportBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-file-csv"></i> ייצא CSV</button>
-        <button id="backupBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-save"></i> גיבוי</button>
-        <button id="restoreBtnPopup" class="action-btn" style="border-radius:0 0 1.1rem 1.1rem;width:100%;justify-content:flex-start;"><i class="fas fa-folder-open"></i> שחזור</button>
-      </div>
-    </div>
   </section>
   <section class="card">
     <h2 style="margin-bottom:18px;">תנועות אחרונות</h2>
@@ -374,16 +733,21 @@
   <!-- הוצאות קבועות -->
   <section class="card" id="fixedExpensesSection">
     <h2 style="margin-bottom:18px;">הוצאות קבועות</h2>
-    <form id="addFixedExpenseForm" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
-      <span class="icon-emoji">📝</span>
-      <input type="text" id="fixedDescInput" placeholder="תיאור הוצאה קבועה" style="flex:1;min-width:120px;">
-      <span class="icon-emoji">💰</span>
-      <input type="number" id="fixedAmountInput" placeholder="סכום" min="0" style="width:100px;">
-      <button type="submit" class="add-expense-btn" style="padding:8px 18px;"><i class="fas fa-plus"></i> הוסף קבועה</button>
+    <form id="addFixedExpenseForm" class="fixed-expense-form" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+      <div class="fixed-expense-input-group">
+        <span class="icon-emoji">📝</span>
+        <input type="text" id="fixedDescInput" placeholder="תיאור הוצאה קבועה" style="flex:1;min-width:120px;">
+      </div>
+      <div class="fixed-expense-input-group">
+        <span class="icon-emoji">💰</span>
+        <input type="number" id="fixedAmountInput" placeholder="סכום" min="0" style="width:100px;">
+      </div>
+      <button type="submit" id="addFixedExpenseBtn" class="add-expense-btn" style="padding:8px 18px;"><i class="fas fa-plus"></i> הוסף קבועה</button>
     </form>
     <ul id="fixedExpensesList" class="expense-list"></ul>
   </section>
   <div id="toast" class="toast"></div>
+  <div id="backdrop" class="backdrop" onclick="this.classList.remove('active'); document.getElementById('settingsMenu').classList.remove('active');"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="utils.js"></script>
   <script src="index.js"></script>
@@ -391,5 +755,30 @@
   <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
     הנתונים נשמרים אוטומטית במכשיר שלך. גם אם תסגור את הדף, המידע יישמר.
   </p>
+  <!-- תפריט הגדרות -->
+  <div id="settingsMenu" class="settings-menu">
+    <div class="settings-header">
+      <h2>הגדרות</h2>
+      <button id="closeSettingsBtn" class="close-btn" onclick="document.getElementById('settingsMenu').classList.remove('active'); document.getElementById('backdrop').classList.remove('active');"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="settings-group">
+      <h3>תקציב והון</h3>
+      <div class="settings-row">
+        <input type="number" id="maxInput" placeholder="הגדר תקציב" min="0">
+        <button id="setMaxBtn" class="action-btn"><i class="fas fa-wallet"></i> הגדר</button>
+      </div>
+      <div class="settings-row">
+        <input type="number" id="capitalInput" placeholder="הגדר הון" min="0">
+        <button id="setCapitalBtn" class="action-btn"><i class="fas fa-coins"></i> הגדר</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <h3>ניהול נתונים</h3>
+      <button id="resetBtn" class="action-btn full-width"><i class="fas fa-undo"></i> איפוס תקציב</button>
+      <button id="exportBtn" class="action-btn full-width"><i class="fas fa-file-csv"></i> ייצא CSV</button>
+      <button id="backupBtn" class="action-btn full-width"><i class="fas fa-save"></i> גיבוי נתונים</button>
+      <button id="restoreBtn" class="action-btn full-width"><i class="fas fa-folder-open"></i> שחזור נתונים</button>
+    </div>
+  </div>
 </body>
 </html> 
