@@ -82,7 +82,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  order: 1;
+  order: 3;
 }
 
 h1 {
@@ -93,15 +93,15 @@ h1 {
   margin: 0;
   order: 2;
   flex: 1;
-  transform: translateX(20px);
+  transform: translateX(0);
 }
 
 .header-controls {
   display: flex;
   align-items: center;
   gap: 10px;
-  order: 3;
-  flex-direction: row; /* Changed from row-reverse for new layout */
+  order: 1;
+  flex-direction: row;
 }
 
 /* Perfect circle buttons */
@@ -756,8 +756,8 @@ canvas {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-right: auto;
-  margin-left: 0;
+  margin-right: 0;
+  margin-left: auto;
 }
 
 .settings-toggle {
@@ -1391,18 +1391,18 @@ h2 {
   }
   
   .header-icon {
-    right: 10px;
+    left: 10px;
     font-size: 1.8rem;
   }
   
   .header-controls {
-    left: 10px;
+    right: 10px;
     gap: 8px;
   }
   
   h1 {
     font-size: 1.8rem;
-    transform: translateX(15px);
+    transform: translateX(0);
   }
 }
 
@@ -1414,8 +1414,8 @@ h2 {
   }
   
   .cat-toggle {
-    margin-right: 6px;
-    margin-left: 0;
+    margin-left: 6px;
+    margin-right: 0;
   }
   
   .settings-toggle i {

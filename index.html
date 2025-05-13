@@ -31,12 +31,12 @@
       font-weight: 700;
       text-align: center;
       margin: 0;
-      transform: translateX(20px);
+      transform: translateX(0);
     }
     
     .header-controls {
       position: absolute;
-      left: 15px;
+      right: 15px;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -45,7 +45,7 @@
     
     .header-icon {
       position: absolute;
-      right: 15px;
+      left: 15px;
     }
     
     /* Using global button styles from styles.css */
@@ -159,15 +159,15 @@
 
       .header-controls {
         gap: 12px;
-        left: 5px;
+        right: 5px;
       }
       
       header h1 {
-        transform: translateX(15px);
+        transform: translateX(0);
       }
       
       .header-icon {
-        right: 5px;
+        left: 5px;
       }
     }
 
@@ -200,11 +200,11 @@
       }
       
       .header-icon {
-        right: 5px;
+        left: 5px;
       }
       
       .header-controls {
-        left: 5px;
+        right: 5px;
       }
       
       h1 {
@@ -213,7 +213,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        transform: translateX(10px);
+        transform: translateX(0);
       }
       
       .card {
@@ -227,12 +227,12 @@
   <div id="loader" class="loader"></div>
   <header>
     <div class="header-layout">
-      <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
-      <h1>ניהול תקציב</h1>
       <div class="header-controls">
         <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="toggleSettings()"><i class="fas fa-gear"></i></button>
         <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
       </div>
+      <h1>ניהול תקציב</h1>
+      <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
     </div>
   </header>
   
