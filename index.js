@@ -813,3 +813,63 @@ document.addEventListener('DOMContentLoaded', () => {
     optimizeChartsForMobile();
   });
 }); 
+
+function initializeChart() {
+  let ctx = document.getElementById('expenseChart').getContext('2d');
+  
+  // Create gradient for main section
+  let greenGradient = ctx.createLinearGradient(0, 0, 0, 400);
+  greenGradient.addColorStop(0, 'rgba(0, 200, 81, 1)');
+  greenGradient.addColorStop(1, 'rgba(0, 200, 81, 0.7)');
+  
+  // Get data
+  let remain = Math.max(0, MAX_BUDGET - totalExpenses);
+  
+  // Create pie chart
+  expenseChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['נוצל', 'נשאר'],
+      datasets: [{
+        data: [totalExpenses, remain],
+        backgroundColor: [greenGradient, '#000'],
+        borderWidth: 0,
+        hoverOffset: 5
+      }]
+    },
+    options: {
+      cutout: '70%',
+      radius: '90%',
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          enabled: true,
+          callbacks: {
+            label: function(context) {
+              return `${context.label}: ${context.raw} ₪`;
+            }
+          }
+        }
+      },
+      animation: {
+        animateRotate: true,
+        animateScale: true
+      },
+      layout: {
+        padding: {
+          top: 15,
+          bottom: 15,
+          left: 15,
+          right: 15
+        }
+      },
+      rotation: 270, // Start at top
+      circumference: 360, // Full circle (instead of semi-circle)
+      events: [] // Disable all events - handles mobile better
+    }
+  });
+} 

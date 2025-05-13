@@ -113,8 +113,20 @@ h1 {
 #chart-container {
   width: 100%; max-width: 320px; margin: 0 auto 10px auto;
   display: flex; flex-direction: column; align-items: center;
+  position: relative;
 }
-#expenseChart { width: 100% !important; height: auto !important; }
+#expenseChart { 
+  width: 100% !important; 
+  height: auto !important; 
+  display: block;
+  margin: 0 auto;
+}
+#capitalText {
+  text-align: center;
+  margin-top: 10px;
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
 .add-expense-card {
   background: var(--expense-card-bg);
   border-radius: var(--expense-card-radius);
@@ -285,6 +297,66 @@ h1 {
     background: rgba(0,0,0,0.25);
     z-index: 1000;
   }
+  #chart-container {
+    max-width: 75%;
+    margin: 10px auto 15px auto;
+  }
+  .status-budget {
+    font-size: 1.1rem;
+    padding: 0 10px;
+  }
+  #capitalText {
+    margin-top: 8px;
+    font-size: 0.9rem;
+  }
+  .expense-item {
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .expense-item .expense-icon {
+    font-size: 1.1rem;
+    margin-left: 5px;
+  }
+  
+  .expense-item .expense-cat {
+    font-size: 0.95rem;
+    margin-left: 5px;
+  }
+  
+  .expense-item .expense-amount {
+    font-size: 0.95rem;
+    margin-left: auto;
+  }
+  
+  .expense-item .expense-date {
+    width: 100%;
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-top: 5px;
+    text-align: right;
+  }
+}
+@media (max-width: 380px) {
+  .expense-item {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .expense-item .expense-icon {
+    font-size: 1rem;
+  }
+  
+  .expense-item .expense-cat,
+  .expense-item .expense-amount {
+    font-size: 0.9rem;
+  }
+  
+  .expense-item .expense-date {
+    font-size: 0.8rem;
+  }
 }
 /* Footer */
 footer {
@@ -365,9 +437,14 @@ canvas {
   }
 
   .card {
-    padding: 15px 10px;
+    padding: 15px 12px;
     border-radius: 1rem;
     margin-bottom: 15px;
+  }
+
+  #chart-container {
+    max-width: 75%;
+    margin: 0 auto 15px auto;
   }
 
   h1 {
@@ -380,13 +457,14 @@ canvas {
   }
 
   .add-expense-card {
-    padding: 12px 8px 8px 8px;
+    padding: 12px 10px 8px 10px;
   }
 
   .add-expense-row input, 
   .add-expense-row select {
-    padding: 8px;
-    font-size: 0.95rem;
+    padding: 10px;
+    font-size: 16px;
+    min-height: 44px;
   }
 
   #addFixedExpenseForm {
@@ -404,7 +482,7 @@ canvas {
   }
 
   .expense-item {
-    padding: 10px 12px;
+    padding: 8px 10px;
     font-size: 0.95rem;
     flex-wrap: wrap;
   }
@@ -463,11 +541,20 @@ canvas {
 
   .card {
     width: 98%;
-    padding: 12px 8px;
+    padding: 12px 10px;
+  }
+
+  #chart-container {
+    max-width: 85%;
   }
 
   .status-budget {
     font-size: 0.95rem;
+    margin: 12px 0 10px 0;
+  }
+
+  .expense-item {
+    padding: 8px 10px;
   }
 }
 
