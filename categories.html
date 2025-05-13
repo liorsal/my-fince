@@ -141,6 +141,100 @@
     html {
       scroll-behavior: smooth;
     }
+
+    /* Budget panel slide-in styles */
+    .budget-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 320px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-out;
+    }
+    .budget-panel.active {
+      display: flex !important;
+      transform: translateX(0) !important;
+    }
+    .backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+    .budget-panel-header {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .close-budget-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .close-budget-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .budget-allocation-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .budget-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .budget-info-label {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+    }
+    .budget-info-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .budget-allocation-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .budget-allocation-table th,
+    .budget-allocation-table td {
+      padding: 10px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .budget-allocation-table th {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
@@ -235,6 +329,10 @@
     <div class="budget-panel-header">
       <button id="closeBudgetBtn" class="close-budget-btn"><i class="fas fa-times"></i></button>
     </div>
+    <div class="settings-row">
+      <input type="number" id="maxInput" placeholder="הגדר תקציב" min="0">
+      <button id="setMaxBtn" class="action-btn"><i class="fas fa-wallet"></i> הגדר</button>
+    </div>
     
     <div class="budget-allocation-info">
       <div class="budget-info-row">
@@ -251,26 +349,7 @@
       </div>
     </div>
     
-    <table class="budget-allocation-table">
-      <thead>
-        <tr>
-          <th>קטגוריה</th>
-          <th>סכום</th>
-          <th>תקציב</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr><td>🏠 שכר דירה</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>💡 חשבונות</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>⛽ דלק</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>🔥 גז (גפ״מ)</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>🛒 אוכל</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>🎉 בילויים</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>👕 ביגוד</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>🍦 פינוקים</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-        <tr><td>📦 כללי</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
-      </tbody>
-    </table>
+    <div id="categoryBudgetList"></div>
   </div>
   
   <!-- Backdrop for budget panel -->
