@@ -887,9 +887,11 @@ body .settings-menu.active {
   padding-top: 70px; /* Space for close button */
   overflow-y: auto;
   transition: transform 0.3s ease-out, right 0.3s ease-out;
+  display: none; /* Hide by default */
 }
 
 .left-panel.active {
+  display: block; /* Show when active */
   transform: translateX(-320px);
   right: 0;
 }

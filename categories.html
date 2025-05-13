@@ -68,6 +68,47 @@
       --panel-width: 250px;
       --panel-section-bg: #232833;
     }
+    
+    /* Left Panel */
+    .left-panel {
+      display: none; /* Hide by default */
+      position: fixed;
+      right: -320px; /* Start off-screen */
+      top: 0;
+      width: 280px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      padding: 30px 24px;
+      padding-top: 70px; /* Space for close button */
+      overflow-y: auto;
+      transition: transform 0.3s ease-out, right 0.3s ease-out;
+    }
+    
+    .left-panel.active {
+      display: block; /* Show when active */
+      transform: translateX(-320px);
+      right: 0;
+    }
+    
+    .panel-close-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    
     body {
       min-height: 100vh;
       height: auto;
@@ -125,13 +166,6 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
-    }
-    
-    /* Left Panel */
-    .left-panel {
-      width: var(--panel-width);
-      flex-shrink: 0;
-      margin-left: 20px;
     }
     
     .panel-section {
@@ -751,13 +785,14 @@
     <h1>גרפי קטגוריות</h1>
     <div class="header-controls">
       <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
-      <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב"><i class="fas fa-gear"></i></button>
+      <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב" onclick="toggleBudgetPanel()"><i class="fas fa-gear"></i></button>
     </div>
   </header>
   
   <div class="app-container">
     <!-- Left Panel like in index.html -->
-    <div class="left-panel">
+    <div class="left-panel" id="leftPanel">
+      <button id="closePanelBtn" class="panel-close-btn"><i class="fas fa-times"></i></button>
       <div class="panel-section">
         <h3><i class="fas fa-wallet"></i> מצב תקציב</h3>
         <div class="panel-stat">
@@ -857,7 +892,7 @@
   </div>
   
   <!-- Backdrop for budget panel -->
-  <div id="backdrop" class="backdrop"></div>
+  <div id="backdrop" class="backdrop" onclick="closeAllPanels()"></div>
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="utils.js"></script>
@@ -867,13 +902,30 @@
       const budgetSettingsBtn = document.getElementById('budgetSettingsBtn');
       const budgetPanel = document.getElementById('budgetPanel');
       const closeBudgetBtn = document.getElementById('closeBudgetBtn');
+      const closePanelBtn = document.getElementById('closePanelBtn');
+      const leftPanel = document.getElementById('leftPanel');
       const backdrop = document.getElementById('backdrop');
       
-      // Open budget panel
-      budgetSettingsBtn.addEventListener('click', function() {
+      // Function to toggle budget panel
+      window.toggleBudgetPanel = function() {
         budgetPanel.classList.add('active');
         backdrop.classList.add('active');
-      });
+        leftPanel.classList.remove('active');
+      };
+      
+      // Function to toggle left panel
+      window.toggleLeftPanel = function() {
+        leftPanel.classList.add('active');
+        backdrop.classList.add('active');
+        budgetPanel.classList.remove('active');
+      };
+      
+      // Function to close all panels
+      window.closeAllPanels = function() {
+        budgetPanel.classList.remove('active');
+        leftPanel.classList.remove('active');
+        backdrop.classList.remove('active');
+      };
       
       // Close budget panel
       closeBudgetBtn.addEventListener('click', function() {
@@ -881,37 +933,38 @@
         backdrop.classList.remove('active');
       });
       
-      // Close when clicking backdrop
-      backdrop.addEventListener('click', function() {
-        budgetPanel.classList.remove('active');
+      // Close left panel
+      closePanelBtn.addEventListener('click', function() {
+        leftPanel.classList.remove('active');
         backdrop.classList.remove('active');
       });
       
-      // Theme toggle functionality
-      const themeToggle = document.getElementById('themeToggle');
-      themeToggle.addEventListener('click', function() {
-        document.documentElement.classList.toggle('light-theme');
-      });
+      // Close when clicking backdrop
+      backdrop.addEventListener('click', closeAllPanels);
       
       // Left panel buttons
       document.getElementById('panel-grid-view').addEventListener('click', function() {
         document.getElementById('gridViewBtn').click();
+        closeAllPanels();
       });
       
       document.getElementById('panel-list-view').addEventListener('click', function() {
         document.getElementById('listViewBtn').click();
+        closeAllPanels();
       });
       
       document.getElementById('panel-add-all').addEventListener('click', function() {
         document.getElementById('addChartsBtn').click();
+        closeAllPanels();
       });
       
       document.getElementById('panel-close-all').addEventListener('click', function() {
         document.getElementById('closeChartsBtn').click();
+        closeAllPanels();
       });
       
       document.getElementById('panel-budget-settings').addEventListener('click', function() {
-        budgetSettingsBtn.click();
+        toggleBudgetPanel();
       });
       
       document.getElementById('panel-return-home').addEventListener('click', function() {

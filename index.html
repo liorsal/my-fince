@@ -134,13 +134,14 @@
     <h1>ניהול תקציב</h1>
     <div class="header-controls">
       <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
-      <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="console.log('Settings button clicked inline'); document.getElementById('settingsMenu').classList.toggle('active'); document.getElementById('backdrop').classList.toggle('active');"><i class="fas fa-gear"></i></button>
+      <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="toggleSettings()"><i class="fas fa-gear"></i></button>
     </div>
   </header>
   
   <div class="app-container">
     <!-- Left Panel -->
-    <div class="left-panel">
+    <div class="left-panel" id="leftPanel">
+      <button id="closePanelBtn" class="panel-close-btn"><i class="fas fa-times"></i></button>
       <div class="panel-section">
         <h3><i class="fas fa-wallet"></i> מצב תקציב</h3>
         <div class="panel-stat">
@@ -257,7 +258,7 @@
   </div>
   
   <div id="toast" class="toast"></div>
-  <div id="backdrop" class="backdrop" onclick="this.classList.remove('active'); document.getElementById('settingsMenu').classList.remove('active');"></div>
+  <div id="backdrop" class="backdrop" onclick="closeAllPanels()"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="utils.js" defer></script>
   <script src="index.js" defer></script>
@@ -269,7 +270,7 @@
   <div id="settingsMenu" class="settings-menu">
     <div class="settings-header">
       <h2>הגדרות</h2>
-      <button id="closeSettingsBtn" class="close-btn" onclick="document.getElementById('settingsMenu').classList.remove('active'); document.getElementById('backdrop').classList.remove('active');"><i class="fas fa-times"></i></button>
+      <button id="closeSettingsBtn" class="close-btn" onclick="closeAllPanels()"><i class="fas fa-times"></i></button>
     </div>
     <div class="settings-group">
       <h3>תקציב והון</h3>
@@ -303,6 +304,27 @@
     // Update on resize
     window.addEventListener('resize', setViewportHeight);
     
+    // Function to toggle settings panel
+    function toggleSettings() {
+      document.getElementById('settingsMenu').classList.toggle('active');
+      document.getElementById('backdrop').classList.toggle('active');
+      document.getElementById('leftPanel').classList.remove('active');
+    }
+    
+    // Function to toggle left panel
+    function toggleLeftPanel() {
+      document.getElementById('leftPanel').classList.toggle('active');
+      document.getElementById('backdrop').classList.toggle('active');
+      document.getElementById('settingsMenu').classList.remove('active');
+    }
+    
+    // Function to close all panels
+    function closeAllPanels() {
+      document.getElementById('settingsMenu').classList.remove('active');
+      document.getElementById('leftPanel').classList.remove('active');
+      document.getElementById('backdrop').classList.remove('active');
+    }
+    
     // Fix scroll issues - improved version
     document.addEventListener('DOMContentLoaded', function() {
       // Make sure body takes full height
@@ -326,6 +348,65 @@
         document.body.style.background = 'var(--bg-gradient)';
         document.documentElement.style.background = 'var(--bg-gradient)';
       }
+      
+      // Add event listener for close button
+      document.getElementById('closePanelBtn').addEventListener('click', function() {
+        document.getElementById('leftPanel').classList.remove('active');
+        document.getElementById('backdrop').classList.remove('active');
+      });
+      
+      // Setup quick access buttons
+      document.getElementById('quick-expense').addEventListener('click', function() {
+        closeAllPanels();
+        // Focus on expense description field
+        document.getElementById('expenseDescInput').focus();
+      });
+      
+      document.getElementById('quick-fixed-expense').addEventListener('click', function() {
+        closeAllPanels();
+        // Scroll to fixed expenses section
+        document.getElementById('fixedExpensesSection').scrollIntoView({behavior: 'smooth'});
+        // Focus on fixed expense description field
+        setTimeout(function() {
+          document.getElementById('fixedDescInput').focus();
+        }, 300);
+      });
+      
+      document.getElementById('quick-set-budget').addEventListener('click', function() {
+        // Open settings and focus on budget input
+        toggleSettings();
+        setTimeout(function() {
+          document.getElementById('maxInput').focus();
+        }, 300);
+      });
+      
+      document.getElementById('quick-set-capital').addEventListener('click', function() {
+        // Open settings and focus on capital input
+        toggleSettings();
+        setTimeout(function() {
+          document.getElementById('capitalInput').focus();
+        }, 300);
+      });
+      
+      document.getElementById('tool-reset').addEventListener('click', function() {
+        closeAllPanels();
+        document.getElementById('resetBtn').click();
+      });
+      
+      document.getElementById('tool-export').addEventListener('click', function() {
+        closeAllPanels();
+        document.getElementById('exportBtn').click();
+      });
+      
+      document.getElementById('tool-backup').addEventListener('click', function() {
+        closeAllPanels();
+        document.getElementById('backupBtn').click();
+      });
+      
+      document.getElementById('tool-restore').addEventListener('click', function() {
+        closeAllPanels();
+        document.getElementById('restoreBtn').click();
+      });
     });
     
     // Improve button touch response
