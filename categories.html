@@ -22,7 +22,7 @@
     
     header {
       display: flex;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: center;
       padding: 0;
       position: relative;
@@ -30,30 +30,31 @@
       max-width: 600px;
       margin: 0 auto 24px auto;
       height: 60px;
+      flex-direction: row-reverse;
     }
     
     header h1 {
-      margin: 0;
+      margin: 0 10px;
       text-align: center;
-      width: auto;
       flex: 0 0 auto;
       font-size: 2.2rem;
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
+      order: 2;
     }
     
     .header-controls {
-      position: absolute;
-      left: 0;
       display: flex;
       align-items: center;
       gap: 5px;
+      order: 3;
+    }
+    
+    .right-controls {
+      flex-direction: row-reverse;
     }
     
     .header-icon {
-      position: absolute;
-      right: 0;
+      margin-right: 0;
+      order: 1;
     }
     
     /* Using global button styles from styles.css */
@@ -869,12 +870,12 @@
 <body>
   <div id="loader" class="loader"></div>
   <header>
-    <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
-    <h1>גרפי קטגוריות</h1>
-    <div class="header-controls">
-      <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
+    <div class="header-controls right-controls">
       <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב" onclick="toggleBudgetPanel()"><i class="fas fa-gear"></i></button>
+      <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
     </div>
+    <h1>גרפי קטגוריות</h1>
+    <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
   </header>
   
   <div class="app-container">
