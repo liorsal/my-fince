@@ -57,29 +57,32 @@ body {
 }
 
 header {
-  display: flex; 
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 24px;
-  padding: 0;
   width: 100%;
   max-width: 600px;
-  position: relative;
+  margin: 0 auto 24px auto;
+  padding: 0;
   height: 60px;
-  margin-left: auto;
-  margin-right: auto;
   box-sizing: border-box;
+  position: relative;
+}
+
+.header-layout {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 15px;
 }
 
 .header-icon {
-  position: absolute;
-  left: 15px;
   font-size: var(--header-icon-size);
   color: var(--accent);
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
   display: flex;
   align-items: center;
   justify-content: center;
+  order: 1;
 }
 
 h1 {
@@ -88,17 +91,19 @@ h1 {
   letter-spacing: 0.01em;
   text-align: center;
   margin: 0;
+  order: 2;
+  flex: 1;
 }
 
 .header-controls {
-  position: absolute;
-  right: 15px;
   display: flex;
   align-items: center;
   gap: 10px;
+  order: 3;
+  flex-direction: row-reverse; /* Reversed for RTL layout */
 }
 
-/* Button common styles */
+/* Perfect circle buttons */
 .cat-toggle, .settings-toggle {
   width: 44px;
   height: 44px;
@@ -114,6 +119,7 @@ h1 {
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  aspect-ratio: 1/1;
 }
 
 /* Category button */
@@ -1142,54 +1148,23 @@ canvas#expenseChart {
 @media (max-width: 480px) {
   header {
     height: 50px;
-    padding: 0 5px;
-    width: 100%;
-    box-sizing: border-box;
   }
   
-  .header-icon {
-    left: 5px;
-  }
-  
-  .header-controls {
-    right: 5px;
+  .header-layout {
+    padding: 0 10px;
   }
   
   h1 {
     font-size: 1.6rem;
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
   
   .cat-toggle, .settings-toggle {
-    width: 38px;
-    height: 38px;
-  }
-  
-  .cat-toggle {
-    margin-right: 4px;
-  }
-  
-  .settings-toggle i {
-    font-size: 16px;
-    width: 20px;
-    height: 20px;
-  }
-  
-  .cat-toggle::after {
-    width: 8px;
-    height: 8px;
-  }
-  
-  .main-content {
-    padding: 0 5px;
-  }
-  
-  .card {
-    padding: 15px 10px;
-    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 40px;
+    max-height: 40px;
   }
 }
 
