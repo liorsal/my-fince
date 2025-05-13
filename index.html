@@ -356,12 +356,12 @@
       <button id="exportBtn" class="action-btn"><i class="fas fa-file-csv"></i> ייצא CSV</button>
       <button id="backupBtn" class="action-btn"><i class="fas fa-save"></i> גיבוי</button>
       <button id="restoreBtn" class="action-btn"><i class="fas fa-folder-open"></i> שחזור</button>
-      <button id="moreBtn" class="more-btn"><i class="fas fa-ellipsis-h"></i> אפשרויות נוספות</button>
-      <div class="dropdown" id="dropdownMenu">
-        <button id="resetBtnDropdown" class="action-btn"><i class="fas fa-undo"></i> איפוס</button>
-        <button id="exportBtnDropdown" class="action-btn"><i class="fas fa-file-csv"></i> ייצא CSV</button>
-        <button id="backupBtnDropdown" class="action-btn"><i class="fas fa-save"></i> גיבוי</button>
-        <button id="restoreBtnDropdown" class="action-btn"><i class="fas fa-folder-open"></i> שחזור</button>
+      <button id="moreBtn" class="more-btn" style="background:#222;width:2.1rem;height:2.1rem;min-width:2.1rem;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;"><i class="fas fa-gear" style="color:#fff;font-size:1.3rem;"></i></button>
+      <div class="popup-menu" id="popupMenu" style="display:none;position:absolute;right:0;top:120%;background:var(--card-bg);border-radius:1.1rem;box-shadow:0 4px 16px rgba(0,0,0,0.18);z-index:1002;min-width:160px;flex-direction:column;overflow:hidden;">
+        <button id="resetBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-undo"></i> איפוס</button>
+        <button id="exportBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-file-csv"></i> ייצא CSV</button>
+        <button id="backupBtnPopup" class="action-btn" style="border-radius:0;width:100%;justify-content:flex-start;"><i class="fas fa-save"></i> גיבוי</button>
+        <button id="restoreBtnPopup" class="action-btn" style="border-radius:0 0 1.1rem 1.1rem;width:100%;justify-content:flex-start;"><i class="fas fa-folder-open"></i> שחזור</button>
       </div>
     </div>
   </section>
@@ -582,35 +582,85 @@
       });
       fileInput.click();
     });
-    // More options dropdown (mobile)
+    // More options popup (mobile & desktop)
     const moreBtn = document.getElementById('moreBtn');
-    const dropdown = document.getElementById('dropdownMenu');
-    let dropdownOpen = false;
+    const popupMenu = document.getElementById('popupMenu');
+    let popupOpen = false;
+    function openPopup() {
+      popupMenu.style.display = 'flex';
+      popupOpen = true;
+    }
+    function closePopup() {
+      popupMenu.style.display = 'none';
+      popupOpen = false;
+    }
     moreBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      dropdownOpen = !dropdownOpen;
-      dropdown.style.display = dropdownOpen ? 'flex' : 'none';
-      moreBtn.classList.toggle('active', dropdownOpen);
-      if (dropdownOpen) {
-        document.body.classList.add('dropdown-open');
-      } else {
-        document.body.classList.remove('dropdown-open');
-      }
+      if (popupOpen) closePopup();
+      else openPopup();
     });
-    function closeDropdown() {
-      dropdownOpen = false;
-      dropdown.style.display = 'none';
-      moreBtn.classList.remove('active');
-      document.body.classList.remove('dropdown-open');
-    }
     document.body.addEventListener('click', (e) => {
-      if (dropdownOpen && !moreBtn.contains(e.target) && !dropdown.contains(e.target)) {
-        closeDropdown();
+      if (popupOpen && !moreBtn.contains(e.target) && !popupMenu.contains(e.target)) {
+        closePopup();
       }
     }, true);
-    window.addEventListener('scroll', closeDropdown, true);
-    dropdown.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', closeDropdown);
+    window.addEventListener('scroll', closePopup, true);
+    popupMenu.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', closePopup);
+    });
+    // חיבור פעולות
+    function handlePopupBtn(id, fn) {
+      document.getElementById(id).addEventListener('click', fn);
+    }
+    handlePopupBtn('resetBtnPopup',()=>{ current=0; transactions=[]; saveData(); updateAll(); });
+    handlePopupBtn('exportBtnPopup',()=>{ let csv='type,desc,amount,date\n'; transactions.forEach(t=>csv+=`${t.type},${t.desc},${t.amount},${t.date}\n`); const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='transactions.csv'; a.click(); URL.revokeObjectURL(url); });
+    handlePopupBtn('backupBtnPopup', () => {
+      const backupData = JSON.stringify({maxBudget, transactions, capital, fixedExpenses});
+      const blob = new Blob([backupData], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'budget_backup.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('גיבוי נוצר בהצלחה!');
+    });
+    handlePopupBtn('restoreBtnPopup', () => {
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.json';
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+          document.body.removeChild(fileInput);
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const data = JSON.parse(event.target.result);
+            if (data && data.maxBudget !== undefined && Array.isArray(data.transactions)) {
+              maxBudget = data.maxBudget;
+              transactions = data.transactions;
+              capital = data.capital || 0;
+              fixedExpenses = data.fixedExpenses || [];
+              current = transactions.filter(t=>t.type==='expense').reduce((sum,t)=>sum+t.amount,0);
+              saveData();
+              updateAll();
+              showToast('נתונים שוחזרו בהצלחה!');
+            } else {
+              showToast('פורמט קובץ לא תקין!');
+            }
+          } catch (err) {
+            showToast('שגיאה בשחזור הנתונים!');
+          }
+          document.body.removeChild(fileInput);
+        };
+        reader.readAsText(file);
+      });
+      fileInput.click();
     });
     // הוצאות קבועות - UI
     function updateFixedExpensesList() {
