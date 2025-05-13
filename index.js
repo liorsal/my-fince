@@ -381,14 +381,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('resetBtn').addEventListener('click', function() {
-    if (confirm('האם אתה בטוח שברצונך לאפס את התקציב?')) {
+    if (confirm('האם אתה בטוח שברצונך לאפס את ההוצאות הרגילות?')) {
       current = 0; 
-      maxBudget = 0;
       transactions = []; 
       // Do not clear fixedExpenses so they persist
       saveData(); 
       updateAll(); 
-      showToast('תקציב אופס!');
+      showToast('הוצאות רגילות אופסו!');
       settingsMenu.classList.remove('active');
       backdrop.classList.remove('active');
     }
@@ -691,14 +690,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const toolResetBtn = document.getElementById('tool-reset');
   if (toolResetBtn) {
     toolResetBtn.addEventListener('click', () => {
-      if (confirm('האם אתה בטוח שברצונך לאפס את התקציב?')) {
+      if (confirm('האם אתה בטוח שברצונך לאפס את ההוצאות הרגילות?')) {
         current = 0; 
-        maxBudget = 0;
         transactions = []; 
-        fixedExpenses = []; 
         saveData(); 
         updateAll(); 
-        showToast('תקציב אופס!');
+        showToast('הוצאות רגילות אופסו!');
       }
     });
   }
