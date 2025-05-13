@@ -93,6 +93,7 @@ h1 {
   margin: 0;
   order: 2;
   flex: 1;
+  transform: translateX(20px);
 }
 
 .header-controls {
@@ -100,7 +101,7 @@ h1 {
   align-items: center;
   gap: 10px;
   order: 3;
-  flex-direction: row-reverse; /* Reversed for RTL layout */
+  flex-direction: row; /* Changed from row-reverse for new layout */
 }
 
 /* Perfect circle buttons */
@@ -756,6 +757,7 @@ canvas {
   align-items: center;
   gap: 8px;
   margin-right: auto;
+  margin-left: 0;
 }
 
 .settings-toggle {
@@ -1389,17 +1391,18 @@ h2 {
   }
   
   .header-icon {
-    left: 10px;
+    right: 10px;
     font-size: 1.8rem;
   }
   
   .header-controls {
-    right: 10px;
+    left: 10px;
     gap: 8px;
   }
   
   h1 {
     font-size: 1.8rem;
+    transform: translateX(15px);
   }
 }
 
@@ -1412,6 +1415,7 @@ h2 {
   
   .cat-toggle {
     margin-right: 6px;
+    margin-left: 0;
   }
   
   .settings-toggle i {

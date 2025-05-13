@@ -31,19 +31,21 @@
       font-weight: 700;
       text-align: center;
       margin: 0;
+      transform: translateX(20px);
     }
     
     .header-controls {
       position: absolute;
-      right: 15px;
+      left: 15px;
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-direction: row;
     }
     
     .header-icon {
       position: absolute;
-      left: 15px;
+      right: 15px;
     }
     
     /* Using global button styles from styles.css */
@@ -143,7 +145,7 @@
       .cat-toggle, .theme-toggle, .settings-toggle {
         width: 44px;
         height: 44px;
-        margin-left: 0.9rem;
+        margin-right: 0.9rem;
       }
 
       .cat-toggle::after, .theme-toggle::after {
@@ -157,6 +159,15 @@
 
       .header-controls {
         gap: 12px;
+        left: 5px;
+      }
+      
+      header h1 {
+        transform: translateX(15px);
+      }
+      
+      .header-icon {
+        right: 5px;
       }
     }
 
@@ -189,11 +200,11 @@
       }
       
       .header-icon {
-        left: 5px;
+        right: 5px;
       }
       
       .header-controls {
-        right: 5px;
+        left: 5px;
       }
       
       h1 {
@@ -202,6 +213,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        transform: translateX(10px);
       }
       
       .card {
