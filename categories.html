@@ -147,10 +147,7 @@
   <div id="loader" class="loader"></div>
   <header>
     <div class="header-layout">
-      <div class="header-right">
-        <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
-        <h1>גרפי קטגוריות</h1>
-      </div>
+      <div class="header-right"></div>
       <div class="header-left">
         <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
         <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב" onclick="toggleBudgetPanel()"><i class="fas fa-gear"></i></button>
@@ -236,14 +233,13 @@
   <!-- Budget Panel - Similar to settings panel in index.html -->
   <div id="budgetPanel" class="budget-panel">
     <div class="budget-panel-header">
-      <h2>הקצאת תקציב לקטגוריות</h2>
       <button id="closeBudgetBtn" class="close-budget-btn"><i class="fas fa-times"></i></button>
     </div>
     
     <div class="budget-allocation-info">
       <div class="budget-info-row">
         <span class="budget-info-label">תקציב כולל:</span>
-        <span class="budget-info-value" id="totalBudgetValue">0 ₪</span>
+        <span class="budget-info-value" id="totalBudgetValue">900 ₪</span>
       </div>
       <div class="budget-info-row">
         <span class="budget-info-label">תקציב מוקצה:</span>
@@ -251,13 +247,30 @@
       </div>
       <div class="budget-info-row">
         <span class="budget-info-label">תקציב לא מוקצה:</span>
-        <span class="budget-info-value" id="unallocatedBudgetValue">0 ₪</span>
+        <span class="budget-info-value" id="unallocatedBudgetValue">900 ₪</span>
       </div>
     </div>
     
-    <div id="categoryBudgetList">
-      <!-- Category budget items will be populated here -->
-    </div>
+    <table class="budget-allocation-table">
+      <thead>
+        <tr>
+          <th>קטגוריה</th>
+          <th>סכום</th>
+          <th>תקציב</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>🏠 שכר דירה</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>💡 חשבונות</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>⛽ דלק</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>🔥 גז (גפ״מ)</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>🛒 אוכל</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>🎉 בילויים</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>👕 ביגוד</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>🍦 פינוקים</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+        <tr><td>📦 כללי</td><td>0 ₪</td><td><button class="action-btn">הגדר</button></td></tr>
+      </tbody>
+    </table>
   </div>
   
   <!-- Backdrop for budget panel -->
