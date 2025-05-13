@@ -22,9 +22,9 @@
       --good: #00c851;
       --cat-radius: 1.3rem;
       --cat-padding: 18px;
-      --cat-gap: 28px;
-      --cat-title-size: 1.1rem;
-      --cat-icon-size: 2.1rem;
+      --cat-gap: 20px;
+      --cat-title-size: 1rem;
+      --cat-icon-size: 1.8rem;
       --input-bg: #2c2f36;
       --input-border: #444;
       --input-radius: 0.7rem;
@@ -33,6 +33,10 @@
       --toggle-size: 2.1rem;
       --toggle-shadow: 0 1px 3px rgba(0,0,0,0.2);
       --list-gap: 10px;
+      --chart-height: 160px;
+      --panel-bg: #1a1d23;
+      --panel-width: 250px;
+      --panel-section-bg: #232833;
     }
     html.light-theme {
       --bg-gradient: linear-gradient(135deg, #f1f1f1 0%, #e3e3e3 100%);
@@ -43,6 +47,12 @@
       --input-bg: #f7f7f7;
       --input-border: #ccc;
       --input-text: #232526;
+      --panel-bg: #f3f3f3;
+      --panel-section-bg: #fff;
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --cat-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      --neutral: #0d47a1;
+      --good: #00796b;
     }
     body {
       min-height: 100vh;
@@ -65,7 +75,7 @@
       font-weight: 700;
       letter-spacing: 0.01em;
     }
-    .cat-toggle, .theme-toggle {
+    .cat-toggle, .theme-toggle, .settings-toggle {
       width: var(--toggle-size); height: var(--toggle-size); border-radius: 50%; border: none;
       background: var(--toggle-bg); cursor: pointer;
       box-shadow: var(--toggle-shadow);
@@ -74,26 +84,114 @@
       transition: background 0.3s;
     }
     .theme-toggle { background: var(--text); }
-    .theme-toggle i { color: var(--bg); font-size: 1.2rem; }
+    .theme-toggle::after {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: white;
+    }
     .cat-toggle { background: #ff9800; }
-    .cat-toggle i { color: #fff; font-size: 1.2rem; }
+    .cat-toggle::after {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: white;
+    }
+    .settings-toggle { background: #1976d2; }
+    .settings-toggle i { color: #fff; font-size: 1.2rem; }
+    
+    /* App container with left panel */
+    .app-container {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    /* Left Panel */
+    .left-panel {
+      width: var(--panel-width);
+      flex-shrink: 0;
+      margin-left: 20px;
+    }
+    
+    .panel-section {
+      background: var(--panel-section-bg);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    .panel-section h3 {
+      font-size: 1.1rem;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .panel-stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .panel-stat-value {
+      font-weight: bold;
+      color: var(--accent);
+    }
+    
+    .panel-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .panel-item:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .panel-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 10px 0;
+    }
+    
+    /* Main Content */
+    .main-content {
+      flex-grow: 1;
+    }
+    
     .card {
       background: var(--card-bg);
       border-radius: 1.5rem;
       box-shadow: var(--shadow);
       padding: 28px 24px 20px 24px;
-      margin: 0 auto 28px auto;
-      max-width: 900px;
-      width: 95%;
+      margin: 0 0 28px 0;
+      width: 100%;
       transition: background 0.4s;
     }
+    
+    /* Category display */
     #category-charts {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
       gap: var(--cat-gap);
       justify-content: center;
-      align-items: stretch;
+      align-items: start;
     }
+    
     .cat-card {
       background: var(--card-bg);
       border-radius: var(--cat-radius);
@@ -106,99 +204,16 @@
       position: relative;
       transition: background 0.4s;
       min-width: 0;
-    }
-    .cat-header {
-      display: flex; flex-direction: column; align-items: center; margin-bottom: 10px;
-    }
-    .cat-icon {
-      font-size: var(--cat-icon-size);
-      margin-bottom: 4px;
-      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
-    }
-    .cat-title {
-      font-size: var(--cat-title-size);
-      font-weight: bold;
-      color: var(--text);
-      margin-bottom: 0;
-    }
-    .cat-actions {
-      margin-top: 12px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      align-items: stretch;
-    }
-    .cat-actions input[type="text"], .cat-actions input[type="number"] {
-      background: var(--input-bg);
-      border: 1px solid var(--input-border);
-      border-radius: var(--input-radius);
-      color: var(--input-text);
-      padding: 7px 10px;
-      font-size: 1rem;
-      margin-bottom: 0;
-      outline: none;
-      transition: border 0.2s;
-    }
-    .cat-actions input[type="text"]:focus, .cat-actions input[type="number"]:focus {
-      border: 1.5px solid var(--accent);
-    }
-    .addCatExpenseBtn {
-      background: var(--good);
-      color: #fff;
-      border: none;
-      border-radius: 1.2rem;
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 10px 0;
-      cursor: pointer;
-      margin-top: 2px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 7px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.13);
-      transition: background 0.2s, box-shadow 0.2s;
-    }
-    .addCatExpenseBtn:hover { background: #009e3c; }
-    .cat-expense-list {
-      margin-top: 10px;
-      width: 100%;
-      background: transparent;
-      border-radius: 0.7rem;
-      padding: 0;
-      list-style: none;
-      font-size: 0.97rem;
-      color: var(--text);
-      max-height: 120px;
-      overflow-y: auto;
-    }
-    .cat-expense-list li {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 7px;
-      padding: 4px 0;
-      border-bottom: 1px solid #3333;
-      position: relative;
-    }
-    .cat-expense-list li:last-child { border-bottom: none; }
-    .expense-actions {
-      display: flex; gap: 5px;
-    }
-    .expense-actions button {
-      background: none; border: none; color: var(--danger); font-size: 1.1em; cursor: pointer;
-      padding: 0 3px;
-      transition: color 0.2s;
-    }
-    .expense-actions button.edit { color: var(--neutral); }
-    .expense-actions button:hover { opacity: 0.7; }
-    .no-cat {
+      max-width: 100%;
+      height: auto;
       text-align: center;
-      font-size: 1.1rem;
-      color: #bbb;
-      margin: 30px 0;
     }
-    /* Category selector */
+    
+    /* Selector buttons */
     .selector-bar {
       display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px;
     }
+    
     .selector-btn {
       display: flex; align-items: center; gap: 5px;
       background: #2c2f36;
@@ -211,47 +226,344 @@
       box-shadow: 0 1px 3px rgba(0,0,0,0.13);
       transition: background 0.2s, color 0.2s;
     }
+    
     .selector-btn.selected, .selector-btn:active {
       background: var(--accent);
       color: #fff;
     }
-    .selector-btn .cat-icon { font-size: 1.2em; margin-bottom: 0; }
-    .search-bar {
+    
+    /* Replace emoji with circles for all categories */
+    .selector-btn .cat-icon::before {
+      content: "";
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      margin-right: 5px;
+    }
+    
+    /* Specific overrides for certain categories */
+    .selector-btn[data-category="שכר דירה"] .cat-icon::before {
+      background: white;
+    }
+    
+    .selector-btn[data-category="אוכל"] .cat-icon::before {
+      background: #43a047;
+    }
+    
+    .selector-btn[data-category="פינוקים"] .cat-icon::before {
+      background: #f06292;
+    }
+    
+    .selector-btn[data-category="דלק"] .cat-icon::before {
+      background: #ff9800;
+    }
+    
+    /* For light theme */
+    html.light-theme .selector-btn {
+      background: #f0f0f0;
+      color: #333;
+    }
+    
+    html.light-theme .selector-btn.selected {
+      background: var(--accent);
+      color: #fff;
+    }
+    
+    html.light-theme .panel-item:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Budget allocation styles - MODIFIED to be slide-in panel */
+    .budget-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 320px;
+      height: 100vh;
+      background: var(--card-bg);
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      z-index: 1000;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease-out;
+    }
+    
+    .budget-panel.active {
+      display: flex !important;
+      transform: translateX(0) !important;
+    }
+    
+    .budget-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 10px;
+    }
+    
+    .budget-panel-header h2 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: var(--accent);
+    }
+    
+    .close-budget-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    
+    .close-budget-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .budget-allocation-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+    }
+    
+    .budget-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .budget-info-label {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .budget-info-value {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    
+    .budget-allocation-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    
+    .budget-allocation-table th,
+    .budget-allocation-table td {
+      padding: 10px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .budget-allocation-table th {
+      color: var(--accent);
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    
+    .cat-budget-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .cat-budget-input input {
+      width: 80px;
       background: var(--input-bg);
       border: 1px solid var(--input-border);
       border-radius: var(--input-radius);
       color: var(--input-text);
-      padding: 7px 10px;
-      font-size: 1rem;
-      margin-left: 10px;
+      padding: 6px 10px;
+      font-size: 0.9rem;
       outline: none;
-      min-width: 120px;
-      transition: border 0.2s;
     }
-    .view-toggle {
+    
+    .cat-budget-input button {
       background: var(--neutral);
-      color: #fff;
+      color: white;
       border: none;
-      border-radius: 1.2rem;
-      padding: 7px 14px;
-      font-size: 1rem;
+      border-radius: 5px;
+      padding: 6px 12px;
       cursor: pointer;
-      margin-right: 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.13);
-      transition: background 0.2s;
+      font-size: 0.9rem;
     }
-    .view-toggle.active { background: var(--accent); }
+    
+    .cat-budget-input button:hover {
+      background: var(--accent);
+    }
+    
+    .budget-progress {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    
+    .budget-progress-bar {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s ease;
+    }
+    
+    .budget-progress-bar.warning {
+      background: #ff9800;
+    }
+    
+    .budget-progress-bar.danger {
+      background: var(--danger);
+    }
+    
+    .budget-remaining {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 4px;
+    }
+    
+    .cat-budget-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .cat-budget-info {
+      flex: 1;
+    }
+    
+    /* Backdrop for budget panel */
+    .backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+    
     /* Responsive */
-    @media (max-width: 700px) {
-      #category-charts { grid-template-columns: 1fr; }
-      .card { padding: 18px 6px 14px 6px; }
-      header { padding: 0 8px; }
+    @media (max-width: 900px) {
+      .app-container {
+        flex-direction: column;
+        padding: 0 10px;
+      }
+      
+      .left-panel {
+        width: 100%;
+        margin-left: 0;
+        margin-bottom: 20px;
+      }
+      
+      header {
+        padding: 0 15px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      .budget-panel {
+        width: 90%;
+      }
     }
-    @media (max-width: 500px) {
-      .selector-bar { flex-direction: column; gap: 7px; align-items: stretch; }
-      .search-bar { margin-left: 0; margin-bottom: 7px; }
-      .view-toggle { margin-right: 0; margin-bottom: 7px; }
+    
+    @media (max-width: 600px) {
+      .selector-bar {
+        flex-direction: column; 
+        gap: 7px; 
+        align-items: stretch;
+      }
+      
+      .search-bar {
+        margin-left: 0;
+        margin-bottom: 10px;
+        width: 100%;
+      }
+      
+      .view-toggle {
+        margin-right: 0;
+        margin-bottom: 7px;
+      }
+      
+      #category-charts {
+        grid-template-columns: 1fr;
+      }
+      
+      .cat-card {
+        max-width: 100%;
+      }
+      
+      .card {
+        padding: 15px 10px;
+      }
+      
+      canvas {
+        width: 140px !important;
+        height: 140px !important;
+      }
+      
+      /* Better touch targets for mobile */
+      .panel-item {
+        padding: 12px 10px;
+      }
+      
+      .cat-toggle, .theme-toggle, .settings-toggle {
+        width: 2.3rem;
+        height: 2.3rem;
+      }
+      
+      /* Make inputs more touch-friendly */
+      input, select, button {
+        min-height: 44px;
+      }
+      
+      .cat-actions input {
+        font-size: 16px; /* Prevents auto-zoom on iOS */
+      }
     }
+    
+    /* Support for very small screens */
+    @media (max-width: 400px) {
+      .header-controls {
+        display: flex;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      canvas {
+        width: 120px !important;
+        height: 120px !important;
+      }
+    }
+    
     /* Footer */
     footer {
       text-align: center;
@@ -271,34 +583,364 @@
       z-index: 1000;
     }
     .toast.show { opacity: 1; pointer-events: auto; }
+    
+    .cat-header {
+      display: flex; flex-direction: column; align-items: center; margin-bottom: 8px;
+    }
+    
+    .cat-icon {
+      font-size: var(--cat-icon-size);
+      margin-bottom: 4px;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
+    }
+    
+    .cat-title {
+      font-size: var(--cat-title-size);
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 0;
+    }
+    
+    canvas {
+      width: var(--chart-height) !important;
+      height: var(--chart-height) !important;
+      margin: 0 auto 10px auto;
+      display: block;
+      aspect-ratio: 1 / 1;
+      box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .cat-actions {
+      margin-top: 10px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      align-items: stretch;
+    }
+    
+    .cat-actions input[type="text"], .cat-actions input[type="number"] {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      color: var(--input-text);
+      padding: 5px 8px;
+      font-size: 0.9rem;
+      margin-bottom: 0;
+      outline: none;
+      transition: border 0.2s;
+    }
+    
+    .cat-actions input[type="text"]:focus, .cat-actions input[type="number"]:focus {
+      border: 1.5px solid var(--accent);
+    }
+    
+    .addCatExpenseBtn {
+      background: var(--good);
+      color: #fff;
+      border: none;
+      border-radius: 1rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 8px 0;
+      cursor: pointer;
+      margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 5px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    
+    .addCatExpenseBtn:hover { background: #009e3c; }
+    
+    .cat-expense-list {
+      margin-top: 8px;
+      width: 100%;
+      background: transparent;
+      border-radius: 0.7rem;
+      padding: 0;
+      list-style: none;
+      font-size: 0.85rem;
+      color: var(--text);
+      max-height: 90px;
+      overflow-y: auto;
+    }
+    
+    .cat-expense-list li {
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      gap: 5px;
+      padding: 3px 0;
+      border-bottom: 1px solid #3333;
+      position: relative;
+    }
+    
+    .cat-expense-list li:last-child { border-bottom: none; }
+    
+    .expense-actions {
+      display: flex; gap: 5px;
+    }
+    
+    .expense-actions button {
+      background: none; border: none; color: var(--danger); font-size: 1.1em; cursor: pointer;
+      padding: 0 3px;
+      transition: color 0.2s;
+    }
+    
+    .expense-actions button.edit { color: var(--neutral); }
+    .expense-actions button:hover { opacity: 0.7; }
+    
+    .no-cat {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #bbb;
+      margin: 30px 0;
+    }
+    
+    .search-bar {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      color: var(--input-text);
+      padding: 7px 10px;
+      font-size: 1rem;
+      margin-left: 10px;
+      outline: none;
+      min-width: 120px;
+      transition: border 0.2s;
+    }
+    
+    .view-toggle {
+      background: var(--neutral);
+      color: #fff;
+      border: none;
+      border-radius: 1.2rem;
+      padding: 7px 14px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-right: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.13);
+      transition: background 0.2s;
+    }
+    
+    .view-toggle.active { background: var(--accent); }
+    
+    /* Update emoji display for category buttons */
+    .selector-btn .cat-icon {
+      font-size: 1.2em; 
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Light theme adjustments for toggle buttons */
+    html.light-theme .theme-toggle {
+      background: #232526;
+    }
+    
+    html.light-theme .theme-toggle::after {
+      background: white;
+    }
+    
+    html.light-theme .cat-toggle::after {
+      background: white;
+    }
   </style>
 </head>
 <body>
   <div id="loader" class="loader"></div>
   <header>
+    <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
     <h1>גרפי קטגוריות</h1>
-    <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"><i class="fas fa-th-large"></i></a>
-    <button id="themeToggle" class="theme-toggle" title="מעבר מצב"><i class="fas fa-moon"></i></button>
+    <div class="header-controls">
+      <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
+      <button id="themeToggle" class="theme-toggle" title="מעבר מצב"></button>
+      <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב"><i class="fas fa-gear"></i></button>
+    </div>
   </header>
-  <section class="card">
-    <h2 style="margin-bottom:18px;">בחר קטגוריות להצגה</h2>
-    <div class="selector-bar" id="categorySelector"></div>
-    <input type="text" id="catSearch" class="search-bar" placeholder="חפש קטגוריה...">
-    <button id="gridViewBtn" class="view-toggle active"><i class="fas fa-th"></i></button>
-    <button id="listViewBtn" class="view-toggle"><i class="fas fa-list"></i></button>
-    <div style="text-align:center; margin-top:14px;">
-      <button id="addChartsBtn" class="selector-btn" style="background:var(--good);color:#fff;"><i class="fas fa-chart-pie"></i> הוסף גרפים</button>
-      <button id="closeChartsBtn" class="selector-btn" style="background:var(--danger);color:#fff;"><i class="fas fa-times"></i> סגור כל הגרפים</button>
+  
+  <div class="app-container">
+    <!-- Left Panel like in index.html -->
+    <div class="left-panel">
+      <div class="panel-section">
+        <h3><i class="fas fa-wallet"></i> מצב תקציב</h3>
+        <div class="panel-stat">
+          <span class="panel-stat-label">תקציב כולל:</span>
+          <span class="panel-stat-value" id="totalBudgetValue2">0 ₪</span>
+        </div>
+        <div class="panel-stat">
+          <span class="panel-stat-label">תקציב מוקצה:</span>
+          <span class="panel-stat-value" id="allocatedBudgetValue2">0 ₪</span>
+        </div>
+        <div class="panel-stat">
+          <span class="panel-stat-label">לא מוקצה:</span>
+          <span class="panel-stat-value" id="unallocatedBudgetValue2">0 ₪</span>
+        </div>
+      </div>
+      
+      <div class="panel-section">
+        <h3><i class="fas fa-th-large"></i> תצוגה</h3>
+        <div class="panel-item" id="panel-grid-view">
+          <i class="fas fa-th"></i>
+          <span>תצוגת רשת</span>
+        </div>
+        <div class="panel-item" id="panel-list-view">
+          <i class="fas fa-list"></i>
+          <span>תצוגת רשימה</span>
+        </div>
+        <div class="panel-divider"></div>
+        <div class="panel-item" id="panel-add-all">
+          <i class="fas fa-chart-pie"></i>
+          <span>הוסף כל הגרפים</span>
+        </div>
+        <div class="panel-item" id="panel-close-all">
+          <i class="fas fa-times"></i>
+          <span>סגור כל הגרפים</span>
+        </div>
+      </div>
+      
+      <div class="panel-section">
+        <h3><i class="fas fa-tools"></i> ניהול תקציב</h3>
+        <div class="panel-item" id="panel-budget-settings">
+          <i class="fas fa-gear"></i>
+          <span>הגדרות תקציב</span>
+        </div>
+        <div class="panel-item" id="panel-return-home">
+          <i class="fas fa-home"></i>
+          <span>חזרה לדף הראשי</span>
+        </div>
+      </div>
     </div>
-  </section>
-  <section class="card">
-    <div id="category-charts">
-      <p class="no-cat">לא נוספו עדיין קטגוריות - נא להוסיף :)</p>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+      <section class="card">
+        <h2 style="margin-bottom:18px;">בחר קטגוריות להצגה</h2>
+        <div class="selector-bar" id="categorySelector"></div>
+        <input type="text" id="catSearch" class="search-bar" placeholder="חפש קטגוריה...">
+        <button id="gridViewBtn" class="view-toggle active"><i class="fas fa-th"></i></button>
+        <button id="listViewBtn" class="view-toggle"><i class="fas fa-list"></i></button>
+        <div style="text-align:center; margin-top:14px;">
+          <button id="addChartsBtn" class="selector-btn" style="background:var(--good);color:#fff;"><i class="fas fa-chart-pie"></i> הוסף גרפים</button>
+          <button id="closeChartsBtn" class="selector-btn" style="background:var(--danger);color:#fff;"><i class="fas fa-times"></i> סגור כל הגרפים</button>
+        </div>
+      </section>
+      <section class="card">
+        <div id="category-charts">
+          <p class="no-cat">לא נוספו עדיין קטגוריות - נא להוסיף :)</p>
+        </div>
+      </section>
     </div>
-  </section>
+  </div>
+  
+  <!-- Budget Panel - Similar to settings panel in index.html -->
+  <div id="budgetPanel" class="budget-panel">
+    <div class="budget-panel-header">
+      <h2>הקצאת תקציב לקטגוריות</h2>
+      <button id="closeBudgetBtn" class="close-budget-btn"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <div class="budget-allocation-info">
+      <div class="budget-info-row">
+        <span class="budget-info-label">תקציב כולל:</span>
+        <span class="budget-info-value" id="totalBudgetValue">0 ₪</span>
+      </div>
+      <div class="budget-info-row">
+        <span class="budget-info-label">תקציב מוקצה:</span>
+        <span class="budget-info-value" id="allocatedBudgetValue">0 ₪</span>
+      </div>
+      <div class="budget-info-row">
+        <span class="budget-info-label">תקציב לא מוקצה:</span>
+        <span class="budget-info-value" id="unallocatedBudgetValue">0 ₪</span>
+      </div>
+    </div>
+    
+    <div id="categoryBudgetList">
+      <!-- Category budget items will be populated here -->
+    </div>
+  </div>
+  
+  <!-- Backdrop for budget panel -->
+  <div id="backdrop" class="backdrop"></div>
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="utils.js"></script>
+  <script>
+    // Add event listeners for budget panel
+    document.addEventListener('DOMContentLoaded', function() {
+      const budgetSettingsBtn = document.getElementById('budgetSettingsBtn');
+      const budgetPanel = document.getElementById('budgetPanel');
+      const closeBudgetBtn = document.getElementById('closeBudgetBtn');
+      const backdrop = document.getElementById('backdrop');
+      
+      // Open budget panel
+      budgetSettingsBtn.addEventListener('click', function() {
+        budgetPanel.classList.add('active');
+        backdrop.classList.add('active');
+      });
+      
+      // Close budget panel
+      closeBudgetBtn.addEventListener('click', function() {
+        budgetPanel.classList.remove('active');
+        backdrop.classList.remove('active');
+      });
+      
+      // Close when clicking backdrop
+      backdrop.addEventListener('click', function() {
+        budgetPanel.classList.remove('active');
+        backdrop.classList.remove('active');
+      });
+      
+      // Theme toggle functionality
+      const themeToggle = document.getElementById('themeToggle');
+      themeToggle.addEventListener('click', function() {
+        document.documentElement.classList.toggle('light-theme');
+      });
+      
+      // Left panel buttons
+      document.getElementById('panel-grid-view').addEventListener('click', function() {
+        document.getElementById('gridViewBtn').click();
+      });
+      
+      document.getElementById('panel-list-view').addEventListener('click', function() {
+        document.getElementById('listViewBtn').click();
+      });
+      
+      document.getElementById('panel-add-all').addEventListener('click', function() {
+        document.getElementById('addChartsBtn').click();
+      });
+      
+      document.getElementById('panel-close-all').addEventListener('click', function() {
+        document.getElementById('closeChartsBtn').click();
+      });
+      
+      document.getElementById('panel-budget-settings').addEventListener('click', function() {
+        budgetSettingsBtn.click();
+      });
+      
+      document.getElementById('panel-return-home').addEventListener('click', function() {
+        window.location.href = 'index.html';
+      });
+      
+      // Sync the budget values between main panel and side panel
+      function syncBudgetValues() {
+        document.getElementById('totalBudgetValue2').textContent = document.getElementById('totalBudgetValue').textContent;
+        document.getElementById('allocatedBudgetValue2').textContent = document.getElementById('allocatedBudgetValue').textContent;
+        document.getElementById('unallocatedBudgetValue2').textContent = document.getElementById('unallocatedBudgetValue').textContent;
+      }
+      
+      // Call this when budget values update
+      const budgetObserver = new MutationObserver(syncBudgetValues);
+      budgetObserver.observe(document.getElementById('totalBudgetValue'), { characterData: true, childList: true, subtree: true });
+      
+      // Initial sync
+      syncBudgetValues();
+    });
+  </script>
   <script src="categories.js"></script>
   <footer>© 2026 ניהול תקציב</footer>
 </body>

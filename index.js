@@ -4,6 +4,7 @@
 let maxBudget = 0, current = 0, capital = 0;
 let transactions = [];
 let fixedExpenses = [];
+let categoryBudgets = {}; // Add support for category budgets
 
 // Global debug function to manually toggle settings menu
 window.toggleSettings = function() {
@@ -28,6 +29,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Data loaded by utils.js
   loadData();
+
+  // Setup settings toggle with debug logs
+  document.querySelector('.settings-toggle').addEventListener('click', () => {
+    console.log('Settings gear icon clicked - event triggered');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const backdrop = document.getElementById('backdrop');
+    if (settingsMenu && backdrop) {
+      console.log('Toggling settings menu visibility');
+      settingsMenu.classList.toggle('active');
+      backdrop.classList.toggle('active');
+      console.log('Settings menu classes after toggle:', settingsMenu.className);
+    } else {
+      console.error('Settings elements not found during click event');
+    }
+  });
 
   // Category icons map
   const categoryIcons = {
@@ -54,8 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.textBaseline = 'middle';
       
       if (maxBudget === 0 && current === 0 && fixedExpenses.length === 0) {
-        // תקציב אופס לגמרי - התחלה מחדש
-        ctx.fillText(`תקציב אופס`, left+width/2, top+height/2);
+        // מאופס לגמרי - הצג 0 מתוך 0 ₪
+        ctx.fillText(`0 מתוך 0 ₪`, left+width/2, top+height/2);
       } else if (maxBudget === 0) {
         ctx.fillText(`אין תקציב מוגדר`, left+width/2, top+height/2);
       } else {
@@ -94,13 +110,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Update functions
   function updateStatus() {
+    console.log('Executing updateStatus.');
     const fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
     const statusEl = document.getElementById('statusText');
     
     if (maxBudget === 0 && current === 0 && fixedExpenses.length === 0) {
-      // תקציב אופס לגמרי - מציג בירוק
+      // מאופס לגמרי - מציג ירוק ו-0 מתוך 0 ₪
       statusEl.className = `status-budget status-green`;
-      statusEl.textContent = `תקציב אופס - 0 מתוך 0 ₪`;
+      statusEl.textContent = `0 מתוך 0 ₪`;
     } else {
       // מצב רגיל
       const percent = maxBudget ? (current + fixedSum) / maxBudget : 0;
@@ -111,10 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateCapital() {
+    console.log('Executing updateCapital.');
     document.getElementById('capitalText').textContent = `ההון שלך הוא: ${capital} ₪`;
   }
 
   function updateTransactions() {
+    console.log('Executing updateTransactions.');
     transactionsList.innerHTML = '';
     transactions.slice().reverse().forEach(t => {
       const li = document.createElement('li'); li.className = 'expense-item';
@@ -132,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateChart() {
+    console.log('Executing updateChart.');
     // סכומים
     const fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
     const regularSpent = current;
@@ -161,9 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
       chartDataArray = [1];
       chartColorsArray = ['#888']; // שינוי מ-#424242 (שחור) ל-#888 (אפור)
     } else if (totalSpent === 0) {
-      // יש תקציב אבל אין הוצאות - מעגל מלא בצבע אקסנט
+      // יש תקציב אבל אין הוצאות - מעגל אפור (0 מתוך 0 הוצאות)
       chartDataArray = [1];
-      chartColorsArray = ['var(--accent)'];
+      chartColorsArray = ['#888'];
     } else {
       // סדר: נשאר, קבועות, רגילות (רק אם יש מהם)
       chartDataArray = [];
@@ -198,6 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateFixedList() {
+    console.log('Executing updateFixedList.');
     const ul = document.getElementById('fixedExpensesList'); ul.innerHTML = '';
     if (!fixedExpenses.length) {
       ul.innerHTML = '<li style="color:#bbb;text-align:center;">לא הוגדרו הוצאות קבועות</li>';
@@ -230,15 +251,108 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function updatePanelStats() {
+    console.log('Updating panel stats');
+    // Update budget value
+    const budgetValueEl = document.getElementById('budget-value');
+    if (budgetValueEl) {
+      budgetValueEl.textContent = `${maxBudget} ₪`;
+    }
+    
+    // Update remaining value
+    const remainingValueEl = document.getElementById('remaining-value');
+    if (remainingValueEl) {
+      const fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
+      const remaining = Math.max(maxBudget - current - fixedSum, 0);
+      remainingValueEl.textContent = `${remaining} ₪`;
+    }
+    
+    // Update capital value
+    const capitalValueEl = document.getElementById('capital-value');
+    if (capitalValueEl) {
+      capitalValueEl.textContent = `${capital} ₪`;
+    }
+  }
+
   function updateAll() {
-    updateStatus(); updateCapital(); updateChart(); updateTransactions(); updateFixedList();
+    console.log('updateAll function called.');
+    updateStatus(); 
+    console.log('updateStatus called from updateAll.');
+    updateCapital(); 
+    console.log('updateCapital called from updateAll.');
+    updateChart(); 
+    console.log('updateChart called from updateAll.');
+    updateTransactions(); 
+    console.log('updateTransactions called from updateAll.');
+    updateFixedList();
+    console.log('updateFixedList called from updateAll.');
+    updatePanelStats();
+    console.log('updatePanelStats called from updateAll.');
+  }
+
+  function saveData() {
+    console.log('Saving data...');
+    try {
+      // Save all budget data including category budgets
+      localStorage.setItem('budgetData', JSON.stringify({
+        maxBudget, current, transactions, capital, fixedExpenses, categoryBudgets
+      }));
+      console.log('Data saved successfully.');
+    } catch (err) {
+      console.error('Error saving data:', err);
+    }
+  }
+
+  function loadData() {
+    console.log('Loading data...');
+    try {
+      const saved = localStorage.getItem('budgetData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        maxBudget = data.maxBudget || 0;
+        transactions = data.transactions || [];
+        capital = data.capital || 0;
+        fixedExpenses = data.fixedExpenses || [];
+        categoryBudgets = data.categoryBudgets || {}; // Load category budgets
+
+        // Calculate current spending
+        current = transactions
+          .filter(t => t.type === 'expense')
+          .reduce((sum, t) => sum + Number(t.amount), 0);
+        
+        console.log('Data loaded successfully. Budget:', maxBudget, 'Current:', current);
+      } else {
+        console.log('No saved data found.');
+      }
+    } catch (err) {
+      console.error('Error loading data:', err);
+    }
   }
 
   // Event handlers
   document.getElementById('setMaxBtn').addEventListener('click', function() {
     const val = +document.getElementById('maxInput').value;
     if (val > 0) { 
+      // Get old budget for comparison
+      const oldBudget = maxBudget;
+      
+      // Update max budget
       maxBudget = val; 
+      
+      // If budget increased and there are existing category allocations, 
+      // we'll automatically adjust them proportionally
+      if (oldBudget > 0 && Object.keys(categoryBudgets).length > 0) {
+        const ratio = val / oldBudget;
+        
+        // Only adjust if budget increased
+        if (ratio > 1) {
+          for (const cat in categoryBudgets) {
+            // Scale each category budget by the same ratio
+            categoryBudgets[cat] = Math.round(categoryBudgets[cat] * ratio);
+          }
+        }
+      }
+      
       saveData(); 
       updateAll(); 
       showToast('תקציב הוגדר!'); 
@@ -337,102 +451,6 @@ document.addEventListener('DOMContentLoaded', () => {
     inp.click();
   });
 
-  // Popup menu
-  const moreBtn = document.getElementById('moreBtn');
-  const popupMenu = document.getElementById('popupMenu'); 
-  let popupOpen = false;
-  
-  moreBtn.onclick = e => { 
-    e.stopPropagation(); 
-    popupOpen ? popupMenu.style.display = 'none' : popupMenu.style.display = 'flex'; 
-    popupOpen = !popupOpen; 
-  };
-  
-  document.body.addEventListener('click', e => { 
-    if (popupOpen && !moreBtn.contains(e.target) && !popupMenu.contains(e.target)) {
-      popupMenu.style.display = 'none';
-      popupOpen = false;
-    }
-  }, true);
-  
-  window.addEventListener('scroll', () => {
-    popupMenu.style.display = 'none';
-    popupOpen = false;
-  }, true);
-  
-  // Setup buttons in the popup menu
-  document.getElementById('resetBtnPopup').onclick = () => { 
-    current = 0; 
-    maxBudget = 0;
-    transactions = []; 
-    fixedExpenses = []; 
-    saveData(); 
-    updateAll(); 
-    popupMenu.style.display = 'none';
-    popupOpen = false;
-    showToast('תקציב אופס!');
-  };
-  
-  document.getElementById('exportBtnPopup').onclick = () => {
-    let csv = 'type,desc,amount,date\n'; 
-    transactions.forEach(t => csv += `${t.type},${t.desc},${t.amount},${t.date}\n`);
-    const blob = new Blob([csv], {type: 'text/csv'});
-    const a = document.createElement('a'); 
-    a.href = URL.createObjectURL(blob); 
-    a.download = 'transactions.csv'; 
-    a.click();
-    URL.revokeObjectURL(a.href);
-    popupMenu.style.display = 'none';
-    popupOpen = false;
-  };
-  
-  document.getElementById('backupBtnPopup').onclick = () => {
-    const data = JSON.stringify({ maxBudget, transactions, capital, fixedExpenses });
-    const blob = new Blob([data], {type: 'application/json'});
-    const a = document.createElement('a'); 
-    a.href = URL.createObjectURL(blob); 
-    a.download = 'budget_backup.json'; 
-    a.click(); 
-    URL.revokeObjectURL(a.href); 
-    showToast('גיבוי נוצר בהצלחה!');
-    popupMenu.style.display = 'none';
-    popupOpen = false;
-  };
-  
-  document.getElementById('restoreBtnPopup').onclick = () => {
-    const inp = document.createElement('input'); 
-    inp.type = 'file'; 
-    inp.accept = '.json';
-    inp.onchange = e => { 
-      const f = e.target.files[0]; 
-      if (!f) return; 
-      const r = new FileReader(); 
-      r.onload = ev => { 
-        try { 
-          const d = JSON.parse(ev.target.result); 
-          if (d.maxBudget !== undefined && Array.isArray(d.transactions)) { 
-            maxBudget = d.maxBudget; 
-            transactions = d.transactions; 
-            capital = d.capital || 0; 
-            fixedExpenses = d.fixedExpenses || []; 
-            current = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0); 
-            saveData(); 
-            updateAll(); 
-            showToast('נתונים שוחזרו בהצלחה!'); 
-            popupMenu.style.display = 'none';
-            popupOpen = false;
-          } else {
-            showToast('פורמט קובץ לא תקין!'); 
-          }
-        } catch { 
-          showToast('שגיאה בשחזור הנתונים!'); 
-        } 
-      }; 
-      r.readAsText(f); 
-    };
-    inp.click();
-  };
-
   // Add a debug function to check localStorage functionality
   function debugLocalStorageState() {
     console.log('--- localStorage Debug Info ---');
@@ -462,109 +480,23 @@ document.addEventListener('DOMContentLoaded', () => {
   // Call the debug function after initial load
   debugLocalStorageState();
   
-  // Add detailed debugging for the fixed expenses feature
-  console.log('Initializing fixed expenses feature...');
-  console.log('Initial fixed expenses:', fixedExpenses);
-  
-  try {
-    // Validate that DOM elements exist
-    const addFixedBtn = document.getElementById('addFixedExpenseBtn');
-    if (!addFixedBtn) {
-      console.error('ERROR: addFixedExpenseBtn not found in DOM');
-    } else {
-      console.log('Found addFixedExpenseBtn:', addFixedBtn);
-    }
-    
-    const fixedForm = document.getElementById('addFixedExpenseForm');
-    if (!fixedForm) {
-      console.error('ERROR: addFixedExpenseForm not found in DOM');
-    } else {
-      console.log('Found addFixedExpenseForm:', fixedForm);
-    }
-    
-    // Remove the form submit handler and use a direct button click handler instead
-    document.getElementById('addFixedExpenseBtn').addEventListener('click', function(e) {
-      try {
-        console.log('addFixedExpenseBtn clicked');
-        e.preventDefault();
-        const descEl = document.getElementById('fixedDescInput');
-        const amtEl = document.getElementById('fixedAmountInput');
-        
-        if (!descEl) {
-          console.error('ERROR: fixedDescInput not found');
-          return;
-        }
-        if (!amtEl) {
-          console.error('ERROR: fixedAmountInput not found');
-          return;
-        }
-        
-        const desc = descEl.value.trim(); 
-        const amt = +amtEl.value;
-        
-        console.log('Add Fixed Expense button clicked:', { desc, amount: amt });
-        
-        if (desc && amt > 0) { 
-          const newFixedExpense = { desc, amount: amt };
-          console.log('Adding new fixed expense:', newFixedExpense);
-          
-          fixedExpenses.push(newFixedExpense); 
-          console.log('Fixed expenses array after push:', fixedExpenses);
-          
-          saveData(); 
-          console.log('Data saved to localStorage');
-          
-          // Check if the data was properly saved
-          setTimeout(debugLocalStorageState, 100);
-          
-          updateAll(); 
-          console.log('UI updated');
-          
-          showToast('הוצאה קבועה נוספה!'); 
-          descEl.value = ''; 
-          amtEl.value = ''; 
-          
-          // Add a refresh button to manually reload the page if needed
-          document.getElementById('fixedExpensesSection').insertAdjacentHTML('afterbegin', 
-            `<button id="refreshPageBtn" 
-                     style="position:absolute;right:10px;top:10px;background:#1976d2;color:white;
-                            border:none;border-radius:5px;padding:5px 10px;cursor:pointer">
-               <i class="fas fa-sync-alt"></i> רענן דף
-             </button>`
-          );
-          
-          document.getElementById('refreshPageBtn').onclick = function() {
-            window.location.reload();
-          };
-          
-          // Check if reload needed flag exists
-          if (!window.fixedExpensesAdded) {
-            window.fixedExpensesAdded = 0;
-          }
-          window.fixedExpensesAdded++;
-          
-          if (window.fixedExpensesAdded > 1) {
-            // On second add, reload the page to ensure changes are reflected
-            alert('הוצאה קבועה נוספה! הדף יתרענן כעת להצגת השינויים');
-            window.location.reload();
-          }
-        } else {
-          console.log('Invalid input - desc:', desc, 'amount:', amt);
-          showToast('אנא מלא תיאור וסכום תקינים');
-        }
-      } catch (error) {
-        console.error('ERROR in fixed expense button click handler:', error);
-      }
-    });
-  } catch (error) {
-    console.error('ERROR initializing fixed expenses:', error);
-  }
-
-  // Also prevent form submission which might interfere with the button click
+  // Handle fixed expense form submission
   document.getElementById('addFixedExpenseForm').addEventListener('submit', function(e) {
-    console.log('Form submit event triggered');
     e.preventDefault();
-    console.log('Form submit prevented, using button click handler instead');
+    const descEl = document.getElementById('fixedDescInput');
+    const amtEl = document.getElementById('fixedAmountInput');
+    const desc = descEl.value.trim();
+    const amount = +amtEl.value;
+    if (desc && amount > 0) {
+      fixedExpenses.push({ desc, amount });
+      saveData();
+      updateAll();
+      showToast('הוצאה קבועה נוספה!');
+      descEl.value = '';
+      amtEl.value = '';
+    } else {
+      showToast('אנא מלא תיאור וסכום תקינים');
+    }
   });
 
   // Settings menu functionality
@@ -626,19 +558,258 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Add expense button handler
-  document.getElementById('addExpenseBtn').onclick = () => {
-    const desc = document.getElementById('expenseDescInput').value.trim();
-    const cat = categorySelect.value;
-    const amt = +document.getElementById('expenseInput').value;
-    if (desc && amt > 0) {
-      const now = new Date(); const p = n=>String(n).padStart(2,'0');
-      const dt = `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}T${p(now.getHours())}:${p(now.getMinutes())}`;
-      transactions.push({ type:'expense', amount:amt, desc, date:dt, category:cat });
-      current += amt; saveData(); updateAll(); showToast(current>maxBudget?'חרגת מהתקציב!':'הוצאה נוספה!');
-      document.getElementById('expenseDescInput').value=''; document.getElementById('expenseInput').value='';
-    } else showToast('אנא מלא תיאור וסכום');
-  };
+  const addExpenseBtn = document.getElementById('addExpenseBtn');
+  const descInput = document.getElementById('expenseDescInput');
+  const amtInput = document.getElementById('expenseInput');
+  const catSelect = document.getElementById('categorySelect');
+
+  console.log('Expense input elements found:', { 
+    descInput: descInput ? 'Yes' : 'No',
+    amtInput: amtInput ? 'Yes' : 'No',
+    catSelect: catSelect ? 'Yes' : 'No',
+    addExpenseBtn: addExpenseBtn ? 'Yes' : 'No'
+  });
+
+  if (addExpenseBtn && descInput && amtInput && catSelect) {
+    addExpenseBtn.addEventListener('click', () => {
+      console.log('Add expense button clicked.');
+      const desc = descInput.value.trim();
+      const cat = catSelect.value;
+      const amt = +amtInput.value;
+      console.log('Attempting to add expense with values:', { description: desc, category: cat, amount: amt });
+      if (desc && amt > 0) {
+        console.log('Input validation passed.');
+        const now = new Date(); const p = n=>String(n).padStart(2,'0');
+        const dt = `${now.getFullYear()}-${p(now.getMonth()+1)}-${p(now.getDate())}T${p(now.getHours())}:${p(now.getMinutes())}`;
+        transactions.push({ type:'expense', amount:amt, desc, date:dt, category:cat });
+        console.log('Transaction added:', transactions[transactions.length - 1]);
+        current += amt; 
+        console.log('Current spent updated:', current);
+        saveData(); 
+        console.log('Data saved.');
+        updateAll(); 
+        console.log('updateAll called.');
+        
+        // Show appropriate toast based on budget status
+        let toastMessage = 'הוצאה נוספה!';
+        
+        // Check if this category has a budget and if it's exceeded
+        if (categoryBudgets[cat] && categoryBudgets[cat] > 0) {
+          // Calculate total spent in this category
+          const categorySpent = transactions
+            .filter(t => t.type === 'expense' && t.category === cat)
+            .reduce((sum, t) => sum + Number(t.amount), 0);
+          
+          if (categorySpent > categoryBudgets[cat]) {
+            toastMessage = `חרגת מתקציב הקטגוריה ${cat}!`;
+          }
+        } else if (current > maxBudget) {
+          toastMessage = 'חרגת מהתקציב הכללי!';
+        }
+        
+        showToast(toastMessage);
+        
+        descInput.value=''; 
+        amtInput.value='';
+        console.log('Input fields cleared.');
+      } else {
+        showToast('אנא מלא תיאור וסכום');
+        console.warn('Invalid expense input: description or amount missing/invalid.', { description: desc, amount: amt });
+      }
+    });
+  }
+
+  // Add left panel quick action handlers
+  const quickExpenseBtn = document.getElementById('quick-expense');
+  if (quickExpenseBtn) {
+    quickExpenseBtn.addEventListener('click', () => {
+      const expenseInputs = document.querySelector('.add-expense-card');
+      if (expenseInputs) {
+        // Scroll to expense inputs
+        expenseInputs.scrollIntoView({ behavior: 'smooth' });
+        // Focus on the first input
+        setTimeout(() => {
+          document.getElementById('expenseDescInput').focus();
+        }, 500);
+      }
+    });
+  }
+  
+  const quickFixedExpenseBtn = document.getElementById('quick-fixed-expense');
+  if (quickFixedExpenseBtn) {
+    quickFixedExpenseBtn.addEventListener('click', () => {
+      const fixedExpenseForm = document.getElementById('addFixedExpenseForm');
+      if (fixedExpenseForm) {
+        // Scroll to fixed expense form
+        fixedExpenseForm.scrollIntoView({ behavior: 'smooth' });
+        // Focus on the first input
+        setTimeout(() => {
+          document.getElementById('fixedDescInput').focus();
+        }, 500);
+      }
+    });
+  }
+  
+  const quickSetBudgetBtn = document.getElementById('quick-set-budget');
+  if (quickSetBudgetBtn) {
+    quickSetBudgetBtn.addEventListener('click', () => {
+      // Open settings menu
+      const settingsMenu = document.getElementById('settingsMenu');
+      const backdrop = document.getElementById('backdrop');
+      if (settingsMenu && backdrop) {
+        settingsMenu.classList.add('active');
+        backdrop.classList.add('active');
+        // Focus on budget input
+        setTimeout(() => {
+          document.getElementById('maxInput').focus();
+        }, 300);
+      }
+    });
+  }
+  
+  const quickSetCapitalBtn = document.getElementById('quick-set-capital');
+  if (quickSetCapitalBtn) {
+    quickSetCapitalBtn.addEventListener('click', () => {
+      // Open settings menu
+      const settingsMenu = document.getElementById('settingsMenu');
+      const backdrop = document.getElementById('backdrop');
+      if (settingsMenu && backdrop) {
+        settingsMenu.classList.add('active');
+        backdrop.classList.add('active');
+        // Focus on capital input
+        setTimeout(() => {
+          document.getElementById('capitalInput').focus();
+        }, 300);
+      }
+    });
+  }
+  
+  // Tool buttons
+  const toolResetBtn = document.getElementById('tool-reset');
+  if (toolResetBtn) {
+    toolResetBtn.addEventListener('click', () => {
+      if (confirm('האם אתה בטוח שברצונך לאפס את התקציב?')) {
+        current = 0; 
+        maxBudget = 0;
+        transactions = []; 
+        fixedExpenses = []; 
+        saveData(); 
+        updateAll(); 
+        showToast('תקציב אופס!');
+      }
+    });
+  }
+  
+  const toolExportBtn = document.getElementById('tool-export');
+  if (toolExportBtn) {
+    toolExportBtn.addEventListener('click', () => {
+      let csv = 'type,desc,amount,date\n'; 
+      transactions.forEach(t => csv += `${t.type},${t.desc},${t.amount},${t.date}\n`);
+      const blob = new Blob([csv], {type: 'text/csv'});
+      const a = document.createElement('a'); 
+      a.href = URL.createObjectURL(blob); 
+      a.download = 'transactions.csv'; 
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('ייצוא CSV בוצע בהצלחה!');
+    });
+  }
+  
+  const toolBackupBtn = document.getElementById('tool-backup');
+  if (toolBackupBtn) {
+    toolBackupBtn.addEventListener('click', () => {
+      const data = JSON.stringify({ maxBudget, transactions, capital, fixedExpenses });
+      const blob = new Blob([data], {type: 'application/json'});
+      const a = document.createElement('a'); 
+      a.href = URL.createObjectURL(blob); 
+      a.download = 'budget_backup.json'; 
+      a.click(); 
+      URL.revokeObjectURL(a.href); 
+      showToast('גיבוי נוצר בהצלחה!');
+    });
+  }
+  
+  const toolRestoreBtn = document.getElementById('tool-restore');
+  if (toolRestoreBtn) {
+    toolRestoreBtn.addEventListener('click', () => {
+      const inp = document.createElement('input'); 
+      inp.type = 'file'; 
+      inp.accept = '.json';
+      inp.onchange = e => { 
+        const f = e.target.files[0]; 
+        if (!f) return; 
+        const r = new FileReader(); 
+        r.onload = ev => { 
+          try { 
+            const d = JSON.parse(ev.target.result); 
+            if (d.maxBudget !== undefined && Array.isArray(d.transactions)) { 
+              maxBudget = d.maxBudget; 
+              transactions = d.transactions; 
+              capital = d.capital || 0; 
+              fixedExpenses = d.fixedExpenses || []; 
+              current = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0); 
+              saveData(); 
+              updateAll(); 
+              showToast('נתונים שוחזרו בהצלחה!'); 
+            } else {
+              showToast('פורמט קובץ לא תקין!'); 
+            }
+          } catch { 
+            showToast('שגיאה בשחזור הנתונים!'); 
+          } 
+        }; 
+        r.readAsText(f); 
+      };
+      inp.click();
+    });
+  }
 
   // Initial UI update
   updateAll();
+
+  // Mobile touch improvements
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add tap highlight for mobile
+    const clickableElements = document.querySelectorAll('.panel-item, button, .action-btn');
+    clickableElements.forEach(el => {
+      el.addEventListener('touchstart', function() {
+        this.style.opacity = '0.7';
+      });
+      
+      el.addEventListener('touchend', function() {
+        this.style.opacity = '1';
+        // Add small delay to make tap effect visible
+        setTimeout(() => {
+          this.style.opacity = '1';
+        }, 150);
+      });
+    });
+    
+    // Make sure the panel is visible on mobile
+    const leftPanel = document.querySelector('.left-panel');
+    if (leftPanel && window.innerWidth < 600) {
+      leftPanel.style.display = 'block';
+    }
+    
+    // Prevent zooming when tapping inputs on iOS
+    const metas = document.getElementsByTagName('meta');
+    for (let i = 0; i < metas.length; i++) {
+      if (metas[i].name === 'viewport') {
+        metas[i].content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+        break;
+      }
+    }
+    
+    // Optimize chart rendering for mobile
+    function optimizeChartsForMobile() {
+      const isMobile = window.innerWidth < 600;
+      if (isMobile) {
+        // Reduce animation duration for mobile
+        Chart.defaults.animation.duration = 500;
+      }
+    }
+    
+    window.addEventListener('resize', optimizeChartsForMobile);
+    optimizeChartsForMobile();
+  });
 }); 
