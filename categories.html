@@ -8,6 +8,36 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
   <style>
+    /* iOS background fix */
+    html, body {
+      background: var(--bg-gradient);
+    }
+    
+    /* Prevent white area on bounce effect */
+    @media (max-width: 500px) {
+      html::before {
+        content: "";
+        position: fixed;
+        top: -100px;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background: var(--bg-gradient);
+        z-index: -1;
+      }
+      
+      html::after {
+        content: "";
+        position: fixed;
+        bottom: -100px;
+        left: 0;
+        width: 100%;
+        height: 200px;
+        background: var(--bg-gradient);
+        z-index: -1;
+      }
+    }
+    
     :root {
       --bg-gradient: linear-gradient(135deg, #232526 0%, #414345 100%);
       --card-bg: #23272f;
@@ -43,7 +73,6 @@
       height: auto;
       padding-bottom: 150px !important;
       overflow-y: scroll !important;
-      background: var(--bg-gradient);
       color: var(--text);
       font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
       padding: 24px 0 0 0;
@@ -931,7 +960,14 @@
       const spacer = document.createElement('div');
       spacer.style.height = '150px';
       spacer.style.width = '100%';
+      spacer.style.background = 'var(--bg-gradient)';
       document.body.appendChild(spacer);
+      
+      // Fix iOS scroll bounce
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        document.body.style.background = 'var(--bg-gradient)';
+        document.documentElement.style.background = 'var(--bg-gradient)';
+      }
     });
   </script>
   <script src="categories.js"></script>

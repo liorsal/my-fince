@@ -8,6 +8,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
   <style>
+    /* Page background fix for iOS */
+    html, body {
+      background: var(--bg-gradient);
+    }
+    
     /* Toggle button styles with dots instead of icons */
     .cat-toggle, .theme-toggle, .settings-toggle {
       width: 44px; 
@@ -313,7 +318,14 @@
       const spacer = document.createElement('div');
       spacer.style.height = '150px';
       spacer.style.width = '100%';
+      spacer.style.background = 'var(--bg-gradient)';
       document.body.appendChild(spacer);
+      
+      // Fix iOS scroll bounce
+      if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+        document.body.style.background = 'var(--bg-gradient)';
+        document.documentElement.style.background = 'var(--bg-gradient)';
+      }
     });
     
     // Improve button touch response
