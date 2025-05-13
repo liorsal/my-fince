@@ -16,7 +16,7 @@
     /* Center content styles */
     header {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
       padding: 0;
       position: relative;
@@ -24,31 +24,26 @@
       max-width: 600px;
       margin: 0 auto 24px auto;
       height: 60px;
-      flex-direction: row-reverse;
     }
     
     header h1 {
-      margin: 0 10px;
+      font-size: var(--header-size);
+      font-weight: 700;
       text-align: center;
-      flex: 0 0 auto;
-      font-size: 2.2rem;
-      order: 2;
+      margin: 0;
     }
     
     .header-controls {
+      position: absolute;
+      right: 15px;
       display: flex;
       align-items: center;
-      gap: 5px;
-      order: 3;
-    }
-    
-    .right-controls {
-      flex-direction: row-reverse;
+      gap: 10px;
     }
     
     .header-icon {
-      margin-right: 0;
-      order: 1;
+      position: absolute;
+      left: 15px;
     }
     
     /* Using global button styles from styles.css */
@@ -190,12 +185,12 @@
 <body>
   <div id="loader" class="loader"></div>
   <header>
-    <div class="header-controls right-controls">
-      <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="toggleSettings()"><i class="fas fa-gear"></i></button>
-      <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
-    </div>
-    <h1>ניהול תקציב</h1>
     <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
+    <h1>ניהול תקציב</h1>
+    <div class="header-controls">
+      <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
+      <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="toggleSettings()"><i class="fas fa-gear"></i></button>
+    </div>
   </header>
   
   <div class="app-container">
