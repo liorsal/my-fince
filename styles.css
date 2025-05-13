@@ -36,6 +36,7 @@
   --dropdown-bg: #23272f;
   --dropdown-radius: 1.1rem;
   --dropdown-shadow: 0 2px 8px rgba(0,0,0,0.13);
+  --vh: 1vh; /* Fallback for browsers that don't support custom properties */
 }
 html.light-theme {
   --bg-gradient: linear-gradient(135deg, #f1f1f1 0%, #e3e3e3 100%);
@@ -50,7 +51,8 @@ html.light-theme {
   --dropdown-bg: #fff;
 }
 body {
-  min-height: 100vh;
+  min-height: 100vh; /* Fallback */
+  min-height: calc(var(--vh, 1vh) * 100); /* Mobile viewport fix */
   background: var(--bg-gradient);
   color: var(--text);
   font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
@@ -111,7 +113,7 @@ h1 {
 .status-orange { color: #ff9800; }
 .status-red { color: #ff4444; }
 #chart-container {
-  width: 100%; max-width: 320px; margin: 0 auto 10px auto;
+  width: 100%; max-width: 280px; margin: 0 auto 10px auto;
   display: flex; flex-direction: column; align-items: center;
   position: relative;
 }
@@ -392,6 +394,21 @@ canvas {
 
 /* Responsive Media Queries */
 @media (max-width: 767px) {
+  /* Disable animations for better performance on mobile */
+  .card {
+    animation: none;
+  }
+  
+  /* Reduce transition effects for performance */
+  body, .add-expense-btn, .action-btn, .card, .settings-menu, .backdrop {
+    transition-duration: 0.2s;
+  }
+  
+  /* Simpler box shadows for better rendering */
+  .card, .settings-menu, .left-panel, .add-expense-card, .expense-item {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  
   :root {
     --card-padding: 20px 15px 15px 15px;
     --card-gap: 20px;
@@ -545,16 +562,41 @@ canvas {
   }
 
   #chart-container {
-    max-width: 85%;
+    max-width: 94%;
+    margin: 0.5rem auto;
   }
 
   .status-budget {
     font-size: 0.95rem;
-    margin: 12px 0 10px 0;
+    padding: 0 5px;
   }
 
   .expense-item {
     padding: 8px 10px;
+  }
+  
+  .expense-item .expense-icon {
+    font-size: 1rem;
+    margin-left: 3px;
+  }
+  
+  .expense-item .expense-cat,
+  .expense-item .expense-amount {
+    font-size: 0.85rem;
+  }
+  
+  .expense-item .expense-date {
+    font-size: 0.8rem;
+  }
+  
+  /* Further reduced transitions for performance */
+  * {
+    transition-duration: 0.15s !important;
+  }
+  
+  /* Optimize for low-end devices */
+  .card, .add-expense-card, .expense-item, .panel-item {
+    border-radius: 0.8rem;
   }
 }
 
@@ -945,4 +987,131 @@ html.light-theme .panel-stat {
 
 html.light-theme .panel-stat-label {
   color: rgba(0, 0, 0, 0.7);
+}
+
+/* Fix chart display on mobile */
+@media (max-width: 600px) {
+  #chart-container {
+    max-width: 220px;
+  }
+  
+  .status-budget {
+    margin: 10px 0 5px 0;
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 400px) {
+  #chart-container {
+    max-width: 180px;
+  }
+}
+
+/* Fix chart size in mobile */
+canvas#expenseChart {
+  aspect-ratio: 1 / 1;
+}
+
+/* Phone-specific optimizations */
+@media (max-width: 480px) {
+  /* Larger touch targets for phone users */
+  .cat-toggle, .theme-toggle, .settings-toggle {
+    width: 2.6rem;
+    height: 2.6rem;
+    margin-left: 1rem;
+  }
+  
+  /* Improve input sizing and spacing for touch */
+  input, select, button {
+    min-height: 48px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+  
+  /* Add spacing between expense items for easier selection */
+  .expense-list {
+    gap: 10px;
+  }
+  
+  /* Make buttons more tappable */
+  .add-expense-btn, .action-btn {
+    min-height: 50px;
+  }
+  
+  /* Better spacing in fixed expense form */
+  .fixed-expense-input-group {
+    margin-bottom: 12px;
+  }
+  
+  /* Optimize panel items for touch */
+  .panel-item {
+    padding: 14px 12px;
+  }
+  
+  /* Improve readability of small text */
+  #capitalText {
+    font-size: 1rem;
+    margin-top: 12px;
+  }
+  
+  /* Fix keyboard focus issues */
+  .add-expense-row input:focus,
+  .add-expense-row select:focus {
+    outline: 2px solid var(--accent);
+  }
+
+  /* Better slide-in panel for phones */
+  .left-panel {
+    width: 85%;
+    max-width: 320px;
+    right: -100%;
+    padding-top: 60px;
+    -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+  }
+  
+  .left-panel.active {
+    right: 0;
+    transform: translateX(0);
+  }
+  
+  /* Better touch styles for panel buttons */
+  .panel-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .panel-item {
+    margin-bottom: 12px;
+  }
+  
+  /* Better backdrop handling */
+  .backdrop {
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+  
+  /* Fix settings menu on phone */
+  .settings-menu {
+    width: 85%;
+    max-width: 320px;
+  }
+}
+
+/* Additional fixes for very small screens */
+@media (max-width: 360px) {
+  /* Even more compact layout */
+  .card {
+    padding: 10px 8px;
+  }
+  
+  .header-icon {
+    font-size: 1.3rem;
+  }
+  
+  h1 {
+    font-size: 1.4rem;
+  }
+  
+  /* Simplify shadows for better performance */
+  .card, .add-expense-card, .expense-item {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
 } 

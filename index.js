@@ -27,8 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const expenseCanvas = document.getElementById('expenseChart');
   if (!expenseCanvas) return;
 
+  // Check if we're on a mobile device
+  const isMobile = window.innerWidth < 600;
+  
   // Data loaded by utils.js
   loadData();
+  
+  // Mobile-specific chart optimizations
+  if (isMobile) {
+    Chart.defaults.animation.duration = 300;
+    Chart.defaults.scales.display = false;
+    Chart.defaults.plugins.tooltip.enabled = false;
+  }
 
   // Setup settings toggle with debug logs
   document.querySelector('.settings-toggle').addEventListener('click', () => {
@@ -89,11 +99,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const chartOptions = { 
     cutout: '70%', 
     responsive: true, 
-    animation: { duration: 1200, easing: 'easeOutQuart' }, 
+    animation: { 
+      duration: isMobile ? 300 : 500, 
+      easing: 'easeOutQuad' 
+    }, 
     plugins: { 
       legend: { display: false }, 
-      tooltip: { enabled: true } 
-    } 
+      tooltip: { enabled: !isMobile }  // Disable tooltips on mobile
+    },
+    // Phone optimizations
+    events: isMobile ? [] : ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+    elements: {
+      arc: {
+        borderWidth: 0
+      }
+    },
+    layout: {
+      padding: isMobile ? 5 : 10
+    }
   };
   
   const expenseCtx = expenseCanvas.getContext('2d');
@@ -110,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Update functions
   function updateStatus() {
-    console.log('Executing updateStatus.');
     const fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
     const statusEl = document.getElementById('statusText');
     
@@ -128,12 +150,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateCapital() {
-    console.log('Executing updateCapital.');
     document.getElementById('capitalText').textContent = `ההון שלך הוא: ${capital} ₪`;
   }
 
   function updateTransactions() {
-    console.log('Executing updateTransactions.');
     transactionsList.innerHTML = '';
     transactions.slice().reverse().forEach(t => {
       const li = document.createElement('li'); li.className = 'expense-item';
@@ -151,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateChart() {
-    console.log('Executing updateChart.');
     // סכומים
     const fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
     const regularSpent = current;
@@ -218,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateFixedList() {
-    console.log('Executing updateFixedList.');
     const ul = document.getElementById('fixedExpensesList'); ul.innerHTML = '';
     if (!fixedExpenses.length) {
       ul.innerHTML = '<li style="color:#bbb;text-align:center;">לא הוגדרו הוצאות קבועות</li>';
@@ -252,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updatePanelStats() {
-    console.log('Updating panel stats');
     // Update budget value
     const budgetValueEl = document.getElementById('budget-value');
     if (budgetValueEl) {
@@ -275,36 +292,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateAll() {
-    console.log('updateAll function called.');
     updateStatus(); 
-    console.log('updateStatus called from updateAll.');
     updateCapital(); 
-    console.log('updateCapital called from updateAll.');
     updateChart(); 
-    console.log('updateChart called from updateAll.');
     updateTransactions(); 
-    console.log('updateTransactions called from updateAll.');
     updateFixedList();
-    console.log('updateFixedList called from updateAll.');
     updatePanelStats();
-    console.log('updatePanelStats called from updateAll.');
   }
 
   function saveData() {
-    console.log('Saving data...');
     try {
       // Save all budget data including category budgets
       localStorage.setItem('budgetData', JSON.stringify({
         maxBudget, current, transactions, capital, fixedExpenses, categoryBudgets
       }));
-      console.log('Data saved successfully.');
     } catch (err) {
       console.error('Error saving data:', err);
     }
   }
 
   function loadData() {
-    console.log('Loading data...');
     try {
       const saved = localStorage.getItem('budgetData');
       if (saved) {
@@ -319,10 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
         current = transactions
           .filter(t => t.type === 'expense')
           .reduce((sum, t) => sum + Number(t.amount), 0);
-        
-        console.log('Data loaded successfully. Budget:', maxBudget, 'Current:', current);
-      } else {
-        console.log('No saved data found.');
       }
     } catch (err) {
       console.error('Error loading data:', err);
@@ -813,63 +816,3 @@ document.addEventListener('DOMContentLoaded', () => {
     optimizeChartsForMobile();
   });
 }); 
-
-function initializeChart() {
-  let ctx = document.getElementById('expenseChart').getContext('2d');
-  
-  // Create gradient for main section
-  let greenGradient = ctx.createLinearGradient(0, 0, 0, 400);
-  greenGradient.addColorStop(0, 'rgba(0, 200, 81, 1)');
-  greenGradient.addColorStop(1, 'rgba(0, 200, 81, 0.7)');
-  
-  // Get data
-  let remain = Math.max(0, MAX_BUDGET - totalExpenses);
-  
-  // Create pie chart
-  expenseChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: ['נוצל', 'נשאר'],
-      datasets: [{
-        data: [totalExpenses, remain],
-        backgroundColor: [greenGradient, '#000'],
-        borderWidth: 0,
-        hoverOffset: 5
-      }]
-    },
-    options: {
-      cutout: '70%',
-      radius: '90%',
-      responsive: true,
-      maintainAspectRatio: true,
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          enabled: true,
-          callbacks: {
-            label: function(context) {
-              return `${context.label}: ${context.raw} ₪`;
-            }
-          }
-        }
-      },
-      animation: {
-        animateRotate: true,
-        animateScale: true
-      },
-      layout: {
-        padding: {
-          top: 15,
-          bottom: 15,
-          left: 15,
-          right: 15
-        }
-      },
-      rotation: 270, // Start at top
-      circumference: 360, // Full circle (instead of semi-circle)
-      events: [] // Disable all events - handles mobile better
-    }
-  });
-} 

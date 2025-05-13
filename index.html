@@ -16,6 +16,7 @@
       margin-left: 0.7rem;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.3s;
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
     }
     
     .theme-toggle { 
@@ -83,6 +84,27 @@
       .header-controls {
         gap: 12px;
       }
+    }
+
+    /* iOS specific fixes */
+    @supports (-webkit-touch-callout: none) {
+      /* Add padding to prevent form elements getting cut off under iOS keyboard */
+      .card {
+        padding-bottom: 70px;
+      }
+      
+      /* Fix overscroll bounce effect in iOS */
+      html {
+        position: fixed;
+        height: 100%;
+        overflow: auto;
+        width: 100%;
+      }
+    }
+    
+    /* Smooth scrolling for modern browsers */
+    html {
+      scroll-behavior: smooth;
     }
   </style>
 </head>
@@ -164,7 +186,7 @@
       <section class="card">
         <div class="status-budget" id="statusText">0 מתוך 0 ₪</div>
         <div id="chart-container">
-          <canvas id="expenseChart"></canvas>
+          <canvas id="expenseChart" width="250" height="250"></canvas>
           <p id="capitalText">ההון שלך הוא: 0 ₪</p>
         </div>
         <div class="add-expense-card">
@@ -219,8 +241,8 @@
   <div id="toast" class="toast"></div>
   <div id="backdrop" class="backdrop" onclick="this.classList.remove('active'); document.getElementById('settingsMenu').classList.remove('active');"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="utils.js"></script>
-  <script src="index.js"></script>
+  <script src="utils.js" defer></script>
+  <script src="index.js" defer></script>
   <footer>© 2026 ניהול תקציב</footer>
   <p style="text-align: center; margin-top: 10px; font-size: 0.8rem; opacity: 0.7;">
     הנתונים נשמרים אוטומטית במכשיר שלך. גם אם תסגור את הדף, המידע יישמר.
@@ -256,6 +278,18 @@
       document.documentElement.classList.toggle('light-theme');
       // No need to change inner HTML since we're using ::after for the dot
     });
+    
+    // Fix viewport height on mobile
+    function setViewportHeight() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    // Set initial viewport height
+    setViewportHeight();
+    
+    // Update on resize
+    window.addEventListener('resize', setViewportHeight);
   </script>
   <style>
     /* Improved mobile responsiveness */
