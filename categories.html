@@ -25,19 +25,46 @@
       justify-content: center;
       align-items: center;
       padding: 0;
-      position: relative;
       width: 100%;
       max-width: 600px;
       margin: 0 auto 24px auto;
       height: 60px;
     }
     
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      padding: 0 15px;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
     header h1 {
       font-size: var(--header-size);
       font-weight: 700;
       text-align: center;
-      margin: 0;
-      transform: translateX(0);
+      margin: 0 10px;
+    }
+    
+    .header-icon {
+      font-size: var(--header-icon-size);
+      color: var(--accent);
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     .header-controls {
@@ -678,24 +705,19 @@
     @media (max-width: 480px) {
       header {
         height: 50px;
+        padding: 0;
+      }
+      
+      .header-layout {
         padding: 0 5px;
       }
       
-      .header-icon {
-        left: 5px;
-      }
-      
-      .header-controls {
-        right: 5px;
-      }
-      
       h1 {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
         max-width: 150px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        transform: translateX(0);
       }
       
       .card {
@@ -898,12 +920,14 @@
   <div id="loader" class="loader"></div>
   <header>
     <div class="header-layout">
-      <div class="header-controls">
+      <div class="header-right">
+        <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
+        <h1>גרפי קטגוריות</h1>
+      </div>
+      <div class="header-left">
         <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
         <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב" onclick="toggleBudgetPanel()"><i class="fas fa-gear"></i></button>
       </div>
-      <h1>גרפי קטגוריות</h1>
-      <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
     </div>
   </header>
   

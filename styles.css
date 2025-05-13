@@ -75,6 +75,17 @@ header {
   padding: 0 15px;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .header-icon {
   font-size: var(--header-icon-size);
   color: var(--accent);
@@ -82,7 +93,6 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  order: 3;
 }
 
 h1 {
@@ -90,10 +100,7 @@ h1 {
   font-weight: 700;
   letter-spacing: 0.01em;
   text-align: center;
-  margin: 0;
-  order: 2;
-  flex: 1;
-  transform: translateX(0);
+  margin: 0 10px;
 }
 
 .header-controls {
@@ -1390,19 +1397,17 @@ h2 {
     height: 50px;
   }
   
-  .header-icon {
-    left: 10px;
-    font-size: 1.8rem;
+  .header-layout {
+    padding: 0 10px;
   }
   
-  .header-controls {
-    right: 10px;
+  .header-left {
     gap: 8px;
   }
   
   h1 {
     font-size: 1.8rem;
-    transform: translateX(0);
+    margin: 0 8px;
   }
 }
 
@@ -1411,11 +1416,6 @@ h2 {
   .cat-toggle, .settings-toggle {
     width: 40px;
     height: 40px;
-  }
-  
-  .cat-toggle {
-    margin-left: 6px;
-    margin-right: 0;
   }
   
   .settings-toggle i {
