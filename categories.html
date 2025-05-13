@@ -187,46 +187,49 @@
       font-weight: 700;
       letter-spacing: 0.01em;
     }
+    /* Make buttons perfect circles */
     .cat-toggle, .theme-toggle, .settings-toggle {
       width: 44px; 
       height: 44px;
       border-radius: 50%;
       margin: 0 0 0 10px;
       padding: 0;
-      overflow: hidden;
+      overflow: visible;
       box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      -webkit-tap-highlight-color: transparent;
+      position: relative;
     }
-    .theme-toggle { background: var(--text); }
-    .theme-toggle::after {
-      content: "";
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: white;
-    }
+    
     .cat-toggle { 
       background: #ff9800; 
     }
+    
     .cat-toggle::after {
       content: "";
-      display: inline-block;
-      width: 10px;
-      height: 10px;
+      display: block;
+      width: 12px;
+      height: 12px;
       border-radius: 50%;
       background: white;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
     }
+    
     .settings-toggle { 
       background: #1976d2; 
     }
+    
     .settings-toggle i { 
       font-size: 1.3rem; 
       color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     
     /* App container with left panel */
