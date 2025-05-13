@@ -385,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
       current = 0; 
       maxBudget = 0;
       transactions = []; 
-      fixedExpenses = []; 
+      // Do not clear fixedExpenses so they persist
       saveData(); 
       updateAll(); 
       showToast('תקציב אופס!');
