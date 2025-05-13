@@ -14,30 +14,54 @@
     }
     
     /* Center content styles */
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
     header {
+      display: flex;
       justify-content: center;
+      align-items: center;
       padding: 0;
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 24px auto;
+      height: 60px;
     }
     
     header h1 {
-      margin: 0 auto;
+      margin: 0;
       text-align: center;
+      width: auto;
+      flex: 0 0 auto;
+      font-size: 2.2rem;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
     
     .header-controls {
       position: absolute;
-      left: 20px;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     
     .header-icon {
       position: absolute;
-      right: 20px;
+      right: 0;
     }
     
     .main-content {
       flex-grow: 1;
       max-width: 600px;
       margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
     }
     
     .selector-bar {
@@ -166,9 +190,16 @@
     .cat-toggle, .theme-toggle, .settings-toggle {
       width: 44px; 
       height: 44px;
-      aspect-ratio: 1 / 1;
-      transition: background 0.1s !important;
-      will-change: transform;
+      border-radius: 50%;
+      margin: 0 0 0 10px;
+      padding: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
     .theme-toggle { background: var(--text); }
     .theme-toggle::after {
@@ -179,7 +210,9 @@
       border-radius: 50%;
       background: white;
     }
-    .cat-toggle { background: #ff9800; }
+    .cat-toggle { 
+      background: #ff9800; 
+    }
     .cat-toggle::after {
       content: "";
       display: inline-block;
@@ -188,15 +221,23 @@
       border-radius: 50%;
       background: white;
     }
-    .settings-toggle { background: #1976d2; }
-    .settings-toggle i { color: #fff; font-size: 1.2rem; }
+    .settings-toggle { 
+      background: #1976d2; 
+    }
+    .settings-toggle i { 
+      font-size: 1.3rem; 
+      color: #fff;
+    }
     
     /* App container with left panel */
     .app-container {
       display: flex;
-      max-width: 1200px;
+      max-width: 600px;
       margin: 0 auto;
-      padding: 0 20px;
+      padding: 0 12px;
+      box-sizing: border-box;
+      width: 100%;
+      justify-content: center;
     }
     
     .panel-section {

@@ -26,7 +26,6 @@
   --expense-card-radius: 1.1rem;
   --expense-card-shadow: 0 2px 8px rgba(0,0,0,0.13);
   --expense-icon-size: 1.3rem;
-  --expense-list-gap: 14px;
   --btn-radius: 1.2rem;
   --btn-padding: 10px 0;
   --btn-gap: 7px;
@@ -43,63 +42,76 @@ body {
   min-height: 100vh;
   height: auto;
   margin: 0;
-  padding: 24px 0 100px 0; /* הגדלת הפדינג בתחתית */
-  overflow-y: scroll; /* אילוץ הסקרול גם אם אין מספיק תוכן */
-  overscroll-behavior: none; /* מניעת אפקט חזרה בסקרול */
+  padding: 24px 0 100px 0; 
+  overflow-y: scroll; 
+  overscroll-behavior: none; 
   background: var(--bg-gradient);
   color: var(--text);
   font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
   direction: rtl;
   transition: background 0.5s, color 0.5s;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 header {
-  display: flex; justify-content: flex-start; align-items: center;
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
   margin-bottom: 24px;
-  padding: 0 24px;
+  padding: 0;
   gap: 18px;
+  width: 100%;
+  max-width: 600px;
+  position: relative;
 }
 
 .header-icon {
   font-size: var(--header-icon-size);
-  margin-left: 10px;
   color: var(--accent);
   filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
+  position: absolute;
+  right: 0;
 }
 
 h1 {
   font-size: var(--header-size);
   font-weight: 700;
   letter-spacing: 0.01em;
-  display: flex; align-items: center;
-  gap: 10px;
+  text-align: center;
+  margin: 0;
 }
 
-.cat-toggle {
+.header-controls {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  gap: 5px;
+}
+
+.cat-toggle, .theme-toggle, .settings-toggle {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: none;
-  background: #ff9800;
-  cursor: pointer;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-  margin-left: 0.7rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s !important;
-  aspect-ratio: 1 / 1;
-  will-change: background;
+  margin: 0 0 0 10px;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.cat-toggle::after {
-  content: "";
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: white;
+.cat-toggle {
+  background: #ff9800;
+}
+
+.settings-toggle {
+  background: #1976d2;
+}
+
+.settings-toggle i {
+  font-size: 1.3rem;
 }
 
 .card {
@@ -111,6 +123,7 @@ h1 {
   max-width: 600px; /* Limit width for better appearance */
   width: 100%;
   transition: background 0.4s;
+  box-sizing: border-box;
 }
 
 .status-budget {
@@ -879,13 +892,14 @@ body .settings-menu.active {
   display: flex;
   flex-direction: row-reverse;
   width: 100%;
-  max-width: 1200px;
+  max-width: 600px;
   margin: 0 auto;
   gap: 24px;
   padding: 0 12px;
   position: relative;
   padding-bottom: 60px;
-  justify-content: center; /* Center content horizontally */
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .left-panel {
@@ -1017,8 +1031,9 @@ body .settings-menu.active {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 600px; /* Limit width for better readability */
-  margin: 0 auto; /* Center within parent */
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Remove the temporary debug styles for settings menu */
@@ -1323,6 +1338,9 @@ body {
   direction: rtl;
   transition: background 0.5s, color 0.5s;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* תיקון עבור iOS */

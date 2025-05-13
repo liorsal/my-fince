@@ -15,23 +15,77 @@
     
     /* Center content styles */
     header {
+      display: flex;
       justify-content: center;
+      align-items: center;
       padding: 0;
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 24px auto;
+      height: 60px;
     }
     
     header h1 {
-      margin: 0 auto;
+      margin: 0;
       text-align: center;
+      width: auto;
+      flex: 0 0 auto;
+      font-size: 2.2rem;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
     }
     
     .header-controls {
       position: absolute;
-      left: 20px;
+      left: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
     
     .header-icon {
       position: absolute;
-      right: 20px;
+      right: 0;
+    }
+    
+    /* Make buttons perfect circles */
+    .cat-toggle, .theme-toggle, .settings-toggle {
+      width: 44px; 
+      height: 44px; 
+      border-radius: 50%; 
+      margin: 0 0 0 10px;
+      padding: 0;
+      overflow: hidden;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center; 
+      justify-content: center;
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cat-toggle {
+      background: #ff9800;
+    }
+
+    .cat-toggle::after {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .settings-toggle {
+      background: #1976d2;
+    }
+
+    .settings-toggle i {
+      color: #fff;
+      font-size: 1.3rem;
     }
     
     .status-budget {
@@ -52,21 +106,23 @@
       max-width: 300px;
     }
     
+    /* Center the main container */
+    .card {
+      margin-left: auto;
+      margin-right: auto;
+      box-sizing: border-box;
+    }
+    
     /* Toggle button styles with dots instead of icons */
     .cat-toggle, .theme-toggle, .settings-toggle {
       width: 44px; 
       height: 44px; 
       border-radius: 50%; 
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-      margin-left: 0.7rem;
-      display: flex; 
-      align-items: center; 
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      transition: background 0.3s;
-      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on iOS */
-      aspect-ratio: 1 / 1; /* שמירה על עיגול מושלם */
+      flex-shrink: 0;
     }
     
     .theme-toggle { 
