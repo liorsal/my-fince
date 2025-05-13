@@ -51,17 +51,18 @@ html.light-theme {
   --dropdown-bg: #fff;
 }
 body {
-  min-height: 100vh; /* Fallback */
-  min-height: calc(var(--vh, 1vh) * 100); /* Mobile viewport fix */
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+  padding: 24px 0 100px 0; /* הגדלת הפדינג בתחתית */
+  overflow-y: scroll; /* אילוץ הסקרול גם אם אין מספיק תוכן */
+  overscroll-behavior: none; /* מניעת אפקט חזרה בסקרול */
   background: var(--bg-gradient);
   color: var(--text);
   font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
-  padding: 24px 0 60px 0; /* הוספת padding בתחתית עבור גלילה */
   direction: rtl;
   transition: background 0.5s, color 0.5s;
   overflow-x: hidden;
-  overflow-y: auto; /* וידוא שהגלילה האנכית פעילה */
-  -webkit-overflow-scrolling: touch; /* שיפור החלקת הגלילה במכשירי iOS */
 }
 header {
   display: flex; justify-content: flex-start; align-items: center;
@@ -93,8 +94,9 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s;
+  transition: background 0.1s !important;
   aspect-ratio: 1 / 1; /* וידוא יחס של 1:1 לעיגול מושלם */
+  will-change: background;
 }
 .theme-toggle { background: var(--text); }
 .theme-toggle i { color: var(--bg); font-size: 1.2rem; }
@@ -402,19 +404,29 @@ canvas {
 
 /* Responsive Media Queries */
 @media (max-width: 767px) {
-  /* Disable animations for better performance on mobile */
-  .card {
-    animation: none;
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cat-toggle, .theme-toggle, .settings-toggle {
+    transition: transform 0.1s !important;
   }
   
-  /* Reduce transition effects for performance */
-  body, .add-expense-btn, .action-btn, .card, .settings-menu, .backdrop {
-    transition-duration: 0.2s;
+  .card, .add-expense-card, .expense-item {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   }
   
-  /* Simpler box shadows for better rendering */
-  .card, .settings-menu, .left-panel, .add-expense-card, .expense-item {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  body {
+    overflow-y: scroll !important;
+  }
+  
+  .app-container {
+    padding-bottom: 120px;
+  }
+  
+  footer {
+    margin-top: 80px;
   }
   
   :root {
@@ -1127,21 +1139,77 @@ canvas#expenseChart {
 
 /* תיקון עבור iOS */
 @supports (-webkit-touch-callout: none) {
-  /* ביטול ה-position:fixed על html כדי לאפשר גלילה תקינה */
   html {
-    position: static;
-    height: auto;
-    overflow: auto;
-    width: 100%;
+    position: static !important;
+    overflow: visible !important;
   }
   
   body {
-    height: auto;
+    -webkit-overflow-scrolling: touch;
     min-height: -webkit-fill-available;
-    padding-bottom: 100px; /* תוספת padding בתחתית עבור iOS */
+    padding-bottom: 150px !important; /* פדינג גדול יותר לiOS */
   }
 }
 
 .card:last-child {
   margin-bottom: 40px;
+}
+
+/* שיפור ביצועים משמעותי */
+html, body {
+  scroll-behavior: auto !important; /* בטל את האנימציה של הגלילה */
+  -webkit-overflow-scrolling: auto;
+  height: auto;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  height: auto;
+  margin: 0;
+  padding: 24px 0 100px 0; /* הגדלת הפדינג בתחתית */
+  overflow-y: scroll; /* אילוץ הסקרול גם אם אין מספיק תוכן */
+  overscroll-behavior: none; /* מניעת אפקט חזרה בסקרול */
+  background: var(--bg-gradient);
+  color: var(--text);
+  font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
+  direction: rtl;
+  transition: background 0.5s, color 0.5s;
+  overflow-x: hidden;
+}
+
+/* הפעלת אקסלרציה גרפית */
+* {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ביטול אנימציות לשיפור ביצועים */
+@media (max-width: 767px) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .cat-toggle, .theme-toggle, .settings-toggle {
+    transition: transform 0.1s !important;
+  }
+  
+  .card, .add-expense-card, .expense-item {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  }
+  
+  body {
+    overflow-y: scroll !important;
+  }
+  
+  .app-container {
+    padding-bottom: 120px;
+  }
+  
+  footer {
+    margin-top: 80px;
+  }
 } 

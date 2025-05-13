@@ -126,7 +126,7 @@
   <div id="loader" class="loader"></div>
   <header>
     <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
-    <h1>ניהול1 תקציב</h1>
+    <h1>ניהול תקציב</h1>
     <div class="header-controls">
       <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
       <button id="themeToggle" class="theme-toggle" title="מעבר מצב"></button>
@@ -287,10 +287,15 @@
     </div>
   </div>
   <script>
-    // Theme toggle functionality - updated to handle the dot-based toggle
-    document.getElementById('themeToggle').addEventListener('click', function() {
+    // Theme toggle functionality - updated for faster toggle
+    document.getElementById('themeToggle').addEventListener('click', function(e) {
+      e.preventDefault(); // מניעת התנהגות ברירת מחדל
+      
+      // שינוי מיידי של הצבע
+      this.style.background = document.documentElement.classList.contains('light-theme') ? '#232526' : '#f5f6fa';
+      
+      // החלפת מצב התצוגה
       document.documentElement.classList.toggle('light-theme');
-      // No need to change inner HTML since we're using ::after for the dot
     });
     
     // Fix viewport height on mobile
@@ -305,17 +310,35 @@
     // Update on resize
     window.addEventListener('resize', setViewportHeight);
     
-    // Fix scroll issues
+    // Fix scroll issues - improved version
     document.addEventListener('DOMContentLoaded', function() {
-      // Add extra space at the bottom to allow scrolling
-      const contentHeight = document.body.offsetHeight;
-      const viewportHeight = window.innerHeight;
-      const footer = document.querySelector('footer');
+      // Make sure body takes full height
+      document.body.style.minHeight = window.innerHeight + 100 + 'px';
       
-      // If content is too short, add padding to ensure scrollability
-      if (contentHeight <= viewportHeight && footer) {
-        footer.style.marginTop = Math.max(100, viewportHeight - contentHeight - 50) + 'px';
-      }
+      // Force scroll to show
+      setTimeout(function() {
+        window.scrollTo(0, 1);
+        window.scrollTo(0, 0);
+      }, 100);
+      
+      // Add space at bottom for scrolling
+      const spacer = document.createElement('div');
+      spacer.style.height = '150px';
+      spacer.style.width = '100%';
+      document.body.appendChild(spacer);
+    });
+    
+    // Improve button touch response
+    const buttons = document.querySelectorAll('button, .cat-toggle, .theme-toggle, .settings-toggle');
+    buttons.forEach(function(button) {
+      button.addEventListener('touchstart', function(e) {
+        // מיידי - בלי השהייה
+        this.style.transform = 'scale(0.95)';
+      });
+      
+      button.addEventListener('touchend', function(e) {
+        this.style.transform = 'scale(1)';
+      });
     });
   </script>
   <style>

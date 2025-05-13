@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>גרפי קטגוריות</title>
   <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -56,6 +56,9 @@
     }
     body {
       min-height: 100vh;
+      height: auto;
+      padding-bottom: 150px !important;
+      overflow-y: scroll !important;
       background: var(--bg-gradient);
       color: var(--text);
       font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
@@ -76,12 +79,11 @@
       letter-spacing: 0.01em;
     }
     .cat-toggle, .theme-toggle, .settings-toggle {
-      width: var(--toggle-size); height: var(--toggle-size); border-radius: 50%; border: none;
-      background: var(--toggle-bg); cursor: pointer;
-      box-shadow: var(--toggle-shadow);
-      margin-left: 0.7rem;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.3s;
+      width: 44px; 
+      height: 44px;
+      aspect-ratio: 1 / 1;
+      transition: background 0.1s !important;
+      will-change: transform;
     }
     .theme-toggle { background: var(--text); }
     .theme-toggle::after {
@@ -512,7 +514,7 @@
       }
       
       #category-charts {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
       }
       
       .cat-card {
@@ -545,6 +547,12 @@
       
       .cat-actions input {
         font-size: 16px; /* Prevents auto-zoom on iOS */
+      }
+      
+      /* שיפור ביצועים */
+      * {
+        animation: none !important;
+        transition-duration: 0.1s !important;
       }
     }
     
@@ -939,6 +947,43 @@
       
       // Initial sync
       syncBudgetValues();
+    });
+
+    // שיפור ביצועים וגלילה
+    document.addEventListener('DOMContentLoaded', function() {
+      // הבטחת גלילה
+      document.body.style.minHeight = window.innerHeight + 100 + 'px';
+      
+      // אילוץ מצב גלילה
+      setTimeout(function() {
+        window.scrollTo(0, 1);
+        window.scrollTo(0, 0);
+      }, 100);
+      
+      // תגובה מהירה לכפתורים
+      const buttons = document.querySelectorAll('button, .cat-toggle, .theme-toggle');
+      buttons.forEach(function(button) {
+        button.addEventListener('touchstart', function() {
+          this.style.transform = 'scale(0.95)';
+        });
+        
+        button.addEventListener('touchend', function() {
+          this.style.transform = 'scale(1)';
+        });
+      });
+      
+      // שיפור ביצועי החלפת מצב תצוגה
+      document.querySelector('.theme-toggle').addEventListener('click', function(e) {
+        e.preventDefault();
+        this.style.background = document.documentElement.classList.contains('light-theme') ? '#232526' : '#f5f6fa';
+        document.documentElement.classList.toggle('light-theme');
+      });
+      
+      // הוספת מרווח בתחתית
+      const spacer = document.createElement('div');
+      spacer.style.height = '150px';
+      spacer.style.width = '100%';
+      document.body.appendChild(spacer);
     });
   </script>
   <script src="categories.js"></script>
