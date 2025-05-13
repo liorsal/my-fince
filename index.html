@@ -129,7 +129,6 @@
     <h1>ניהול תקציב</h1>
     <div class="header-controls">
       <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"></a>
-      <button id="themeToggle" class="theme-toggle" title="מעבר מצב"></button>
       <button id="settingsBtn" class="settings-toggle" title="הגדרות" onclick="console.log('Settings button clicked inline'); document.getElementById('settingsMenu').classList.toggle('active'); document.getElementById('backdrop').classList.toggle('active');"><i class="fas fa-gear"></i></button>
     </div>
   </header>
@@ -287,17 +286,6 @@
     </div>
   </div>
   <script>
-    // Theme toggle functionality - updated for faster toggle
-    document.getElementById('themeToggle').addEventListener('click', function(e) {
-      e.preventDefault(); // מניעת התנהגות ברירת מחדל
-      
-      // שינוי מיידי של הצבע
-      this.style.background = document.documentElement.classList.contains('light-theme') ? '#232526' : '#f5f6fa';
-      
-      // החלפת מצב התצוגה
-      document.documentElement.classList.toggle('light-theme');
-    });
-    
     // Fix viewport height on mobile
     function setViewportHeight() {
       const vh = window.innerHeight * 0.01;
@@ -329,7 +317,7 @@
     });
     
     // Improve button touch response
-    const buttons = document.querySelectorAll('button, .cat-toggle, .theme-toggle, .settings-toggle');
+    const buttons = document.querySelectorAll('button, .cat-toggle, .settings-toggle');
     buttons.forEach(function(button) {
       button.addEventListener('touchstart', function(e) {
         // מיידי - בלי השהייה

@@ -38,22 +38,6 @@
       --panel-width: 250px;
       --panel-section-bg: #232833;
     }
-    html.light-theme {
-      --bg-gradient: linear-gradient(135deg, #f1f1f1 0%, #e3e3e3 100%);
-      --card-bg: #fff;
-      --text: #232526;
-      --accent: #00796b;
-      --footer: #000;
-      --input-bg: #f7f7f7;
-      --input-border: #ccc;
-      --input-text: #232526;
-      --panel-bg: #f3f3f3;
-      --panel-section-bg: #fff;
-      --shadow: 0 4px 16px rgba(0,0,0,0.08);
-      --cat-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      --neutral: #0d47a1;
-      --good: #00796b;
-    }
     body {
       min-height: 100vh;
       height: auto;
@@ -260,21 +244,6 @@
     
     .selector-btn[data-category="דלק"] .cat-icon::before {
       background: #ff9800;
-    }
-    
-    /* For light theme */
-    html.light-theme .selector-btn {
-      background: #f0f0f0;
-      color: #333;
-    }
-    
-    html.light-theme .selector-btn.selected {
-      background: var(--accent);
-      color: #fff;
-    }
-    
-    html.light-theme .panel-item:hover {
-      background: rgba(0, 0, 0, 0.05);
     }
     
     /* Budget allocation styles - MODIFIED to be slide-in panel */
@@ -744,19 +713,6 @@
       align-items: center;
       justify-content: center;
     }
-    
-    /* Light theme adjustments for toggle buttons */
-    html.light-theme .theme-toggle {
-      background: #232526;
-    }
-    
-    html.light-theme .theme-toggle::after {
-      background: white;
-    }
-    
-    html.light-theme .cat-toggle::after {
-      background: white;
-    }
   </style>
 </head>
 <body>
@@ -766,7 +722,6 @@
     <h1>גרפי קטגוריות</h1>
     <div class="header-controls">
       <a href="index.html" class="cat-toggle" title="חזרה לניהול תקציב"></a>
-      <button id="themeToggle" class="theme-toggle" title="מעבר מצב"></button>
       <button id="budgetSettingsBtn" class="settings-toggle" title="הגדרות תקציב"><i class="fas fa-gear"></i></button>
     </div>
   </header>
@@ -961,7 +916,7 @@
       }, 100);
       
       // תגובה מהירה לכפתורים
-      const buttons = document.querySelectorAll('button, .cat-toggle, .theme-toggle');
+      const buttons = document.querySelectorAll('button, .cat-toggle');
       buttons.forEach(function(button) {
         button.addEventListener('touchstart', function() {
           this.style.transform = 'scale(0.95)';
@@ -970,13 +925,6 @@
         button.addEventListener('touchend', function() {
           this.style.transform = 'scale(1)';
         });
-      });
-      
-      // שיפור ביצועי החלפת מצב תצוגה
-      document.querySelector('.theme-toggle').addEventListener('click', function(e) {
-        e.preventDefault();
-        this.style.background = document.documentElement.classList.contains('light-theme') ? '#232526' : '#f5f6fa';
-        document.documentElement.classList.toggle('light-theme');
       });
       
       // הוספת מרווח בתחתית
