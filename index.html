@@ -484,7 +484,15 @@
     }
     function updateAll() { updateStatusText(); updateCapitalText(); updateExpenseChart(); updateTransactionsList(); updateFixedExpensesList(); }
     // events
-    document.getElementById('setMaxBtn').addEventListener('click',()=>{ const val=+document.getElementById('maxInput').value; if(val>0){ maxBudget=val; current=0; transactions=[]; saveData(); updateAll(); showToast('תקציב הוגדר!'); }});
+    document.getElementById('setMaxBtn').addEventListener('click',()=>{
+      const val=+document.getElementById('maxInput').value;
+      if(val>0){
+        maxBudget=val;
+        saveData();
+        updateAll();
+        showToast('תקציב הוגדר!');
+      }
+    });
     document.getElementById('addExpenseBtn').addEventListener('click', () => {
       const desc = document.getElementById('expenseDescInput').value.trim();
       const category = categorySelect.value;
