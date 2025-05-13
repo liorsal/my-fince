@@ -672,6 +672,35 @@
       }
     }
     
+    /* Improved mobile optimization */
+    @media (max-width: 480px) {
+      header {
+        height: 50px;
+        padding: 0 5px;
+      }
+      
+      .header-icon {
+        left: 5px;
+      }
+      
+      .header-controls {
+        right: 5px;
+      }
+      
+      h1 {
+        font-size: 1.6rem;
+        max-width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      .card {
+        padding: 15px 10px;
+        border-radius: 12px;
+      }
+    }
+    
     /* Support for very small screens */
     @media (max-width: 400px) {
       .header-controls {

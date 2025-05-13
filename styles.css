@@ -1140,84 +1140,56 @@ canvas#expenseChart {
 
 /* Phone-specific optimizations */
 @media (max-width: 480px) {
-  /* Larger touch targets for phone users */
-  .cat-toggle, .theme-toggle, .settings-toggle {
-    width: 2.6rem;
-    height: 2.6rem;
-    margin-left: 1rem;
+  header {
+    height: 50px;
+    padding: 0 5px;
+    width: 100%;
+    box-sizing: border-box;
   }
   
-  /* Improve input sizing and spacing for touch */
-  input, select, button {
-    min-height: 48px;
-    font-size: 16px; /* Prevents iOS zoom on focus */
+  .header-icon {
+    left: 5px;
   }
   
-  /* Add spacing between expense items for easier selection */
-  .expense-list {
-    gap: 10px;
+  .header-controls {
+    right: 5px;
   }
   
-  /* Make buttons more tappable */
-  .add-expense-btn, .action-btn {
-    min-height: 50px;
+  h1 {
+    font-size: 1.6rem;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
-  /* Better spacing in fixed expense form */
-  .fixed-expense-input-group {
-    margin-bottom: 12px;
+  .cat-toggle, .settings-toggle {
+    width: 38px;
+    height: 38px;
   }
   
-  /* Optimize panel items for touch */
-  .panel-item {
-    padding: 14px 12px;
+  .cat-toggle {
+    margin-right: 4px;
   }
   
-  /* Improve readability of small text */
-  #capitalText {
-    font-size: 1rem;
-    margin-top: 12px;
+  .settings-toggle i {
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
   }
   
-  /* Fix keyboard focus issues */
-  .add-expense-row input:focus,
-  .add-expense-row select:focus {
-    outline: 2px solid var(--accent);
-  }
-
-  /* Better slide-in panel for phones */
-  .left-panel {
-    width: 85%;
-    max-width: 320px;
-    right: -100%;
-    padding-top: 60px;
-    -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
+  .cat-toggle::after {
+    width: 8px;
+    height: 8px;
   }
   
-  .left-panel.active {
-    right: 0;
-    transform: translateX(0);
+  .main-content {
+    padding: 0 5px;
   }
   
-  /* Better touch styles for panel buttons */
-  .panel-section h3 {
-    font-size: 1.1rem;
-  }
-  
-  .panel-item {
-    margin-bottom: 12px;
-  }
-  
-  /* Better backdrop handling */
-  .backdrop {
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
-  }
-  
-  /* Fix settings menu on phone */
-  .settings-menu {
-    width: 85%;
-    max-width: 320px;
+  .card {
+    padding: 15px 10px;
+    border-radius: 12px;
   }
 }
 
