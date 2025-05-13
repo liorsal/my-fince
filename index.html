@@ -4,172 +4,399 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ניהול תקציב</title>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;700&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     :root {
-      --bg: #121212;
-      --card-bg: #1E1E1E;
-      --text: #ffffff;
+      --bg-gradient: linear-gradient(135deg, #232526 0%, #414345 100%);
+      --card-bg: #23272f;
+      --text: #f5f6fa;
       --accent: #00c851;
-      --shadow: rgba(0, 0, 0, 0.2);
-      --input-bg: #e0e0e0;
-      --input-text: #000000;
+      --shadow: 0 4px 16px rgba(0,0,0,0.18);
+      --input-bg: #2c2f36;
+      --input-text: #fff;
+      --input-border: #444;
+      --input-radius: 0.7rem;
+      --danger: #ff4444;
+      --neutral: #1976d2;
+      --good: #00c851;
+      --footer: #fff;
+      --footer-opacity: 0.5;
+      --cat-radius: 1.3rem;
+      --cat-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      --card-radius: 1.5rem;
+      --card-padding: 28px 24px 20px 24px;
+      --card-gap: 28px;
+      --header-size: 2.5rem;
+      --header-icon-size: 2.2rem;
+      --status-size: 1.3rem;
+      --status-weight: 700;
+      --expense-card-bg: #23272f;
+      --expense-card-radius: 1.1rem;
+      --expense-card-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      --expense-icon-size: 1.3rem;
+      --expense-list-gap: 14px;
+      --btn-radius: 1.2rem;
+      --btn-padding: 10px 0;
+      --btn-gap: 7px;
+      --btn-font-size: 1.1rem;
+      --btn-shadow: 0 2px 8px rgba(0,0,0,0.13);
+      --btn-hover: #00b050;
+      --dropdown-bg: #23272f;
+      --dropdown-radius: 1.1rem;
+      --dropdown-shadow: 0 2px 8px rgba(0,0,0,0.13);
     }
     html.light-theme {
-      --bg: #ffffff;
-      --card-bg: #f1f1f1;
-      --text: #000000;
-      --input-bg: #e0e0e0;
-      --input-text: #000000;
+      --bg-gradient: linear-gradient(135deg, #f1f1f1 0%, #e3e3e3 100%);
+      --card-bg: #fff;
+      --text: #232526;
       --accent: #00796b;
+      --input-bg: #f7f7f7;
+      --input-text: #232526;
+      --input-border: #ccc;
+      --footer: #000;
+      --expense-card-bg: #f7f7f7;
+      --dropdown-bg: #fff;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
+      min-height: 100vh;
+      background: var(--bg-gradient);
       color: var(--text);
-      font-family: 'Assistant', sans-serif;
-      padding: 20px;
-      transition: background 0.3s, color 0.3s;
+      font-family: 'Assistant', 'Rubik', 'Alef', sans-serif;
+      padding: 24px 0 0 0;
       direction: rtl;
+      transition: background 0.5s, color 0.5s;
     }
     header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 20px;
+      display: flex; justify-content: flex-start; align-items: center;
+      margin-bottom: 24px;
+      padding: 0 24px;
+      gap: 18px;
+    }
+    .header-icon {
+      font-size: var(--header-icon-size);
+      margin-left: 10px;
+      color: var(--accent);
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.13));
     }
     h1 {
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: var(--header-size);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      display: flex; align-items: center;
+      gap: 10px;
     }
-    .theme-toggle {
-      background: var(--text); 
-      border: none;
-      border-radius: 50%; 
-      width: 2rem; 
-      height: 2rem; 
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    .cat-toggle, .theme-toggle {
+      width: 2.1rem; height: 2.1rem; border-radius: 50%; border: none;
+      background: #ff9800; cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      margin-left: 0.7rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.3s;
     }
+    .theme-toggle { background: var(--text); }
+    .theme-toggle i { color: var(--bg); font-size: 1.2rem; }
+    .cat-toggle { background: #ff9800; }
+    .cat-toggle i { color: #fff; font-size: 1.2rem; }
     .card {
       background: var(--card-bg);
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px var(--shadow);
-      padding: 20px;
-      margin-bottom: 20px;
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: var(--card-padding);
+      margin: 0 auto var(--card-gap) auto;
+      max-width: 900px;
+      width: 95%;
+      transition: background 0.4s;
     }
-    #statusText {
-      margin-top: 15px;
-      font-size: 1.1rem;
+    .status-budget {
+      font-size: var(--status-size);
+      font-weight: var(--status-weight);
       text-align: center;
+      margin: 18px 0 10px 0;
+      transition: color 0.4s;
     }
-    #chart-container, #history-container {
-      width: 100%; max-width: 300px; margin: auto;
+    .status-green { color: #00c851; }
+    .status-orange { color: #ff9800; }
+    .status-red { color: #ff4444; }
+    #chart-container {
+      width: 100%; max-width: 320px; margin: 0 auto 10px auto;
+      display: flex; flex-direction: column; align-items: center;
     }
-    .actions {
+    #expenseChart { width: 100% !important; height: auto !important; }
+    .add-expense-card {
+      background: var(--expense-card-bg);
+      border-radius: var(--expense-card-radius);
+      box-shadow: var(--expense-card-shadow);
+      padding: 18px 14px 10px 14px;
+      margin-bottom: 18px;
+      display: flex; flex-direction: column; gap: 12px;
+      align-items: stretch;
+      max-width: 400px;
+      margin-left: auto; margin-right: auto;
+    }
+    .add-expense-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 0;
+    }
+    .add-expense-row i, .add-expense-row .icon-emoji {
+      font-size: 1.1em; margin-left: 4px;
+    }
+    .add-expense-row input, .add-expense-row select {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: var(--input-radius);
+      color: var(--input-text);
+      padding: 8px 10px;
+      font-size: 1rem;
+      outline: none;
+      flex: 1;
+      transition: border 0.2s;
+    }
+    .add-expense-row input:focus, .add-expense-row select:focus {
+      border: 1.5px solid var(--accent);
+    }
+    .add-expense-btn {
+      background: var(--good);
+      color: #fff;
+      border: none;
+      border-radius: var(--btn-radius);
+      font-size: var(--btn-font-size);
+      font-weight: 700;
+      padding: var(--btn-padding);
+      cursor: pointer;
+      margin-top: 2px;
+      display: flex; align-items: center; justify-content: center;
+      gap: var(--btn-gap);
+      box-shadow: var(--btn-shadow);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    .add-expense-btn:hover {
+      background: var(--btn-hover);
+      transform: scale(1.02);
+    }
+    .actions-bar {
       display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
       margin-top: 15px;
+      position: relative;
     }
-    .actions input, .actions button, .actions select {
-      padding: 10px; border: none; border-radius: 4px; font-size: 1rem;
-      background: var(--input-bg, #1e1e1e);
-      color: var(--input-text, var(--text));
+    .action-btn {
+      background: var(--neutral);
+      color: #fff;
+      border: none;
+      border-radius: var(--btn-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      display: flex; align-items: center; gap: 7px;
+      cursor: pointer;
+      box-shadow: var(--btn-shadow);
+      transition: background 0.2s, transform 0.15s;
     }
-    .actions button {
-      background: var(--accent); cursor: pointer; font-weight: bold;
-      display: flex; align-items: center; gap: 5px;
+    .action-btn:hover { background: var(--accent); transform: scale(1.03); }
+    .dropdown {
+      display: none;
+      position: absolute;
+      left: 0; right: 0; top: 110%;
+      background: var(--dropdown-bg);
+      border-radius: var(--dropdown-radius);
+      box-shadow: var(--dropdown-shadow);
+      z-index: 10;
+      flex-direction: column;
+      gap: 0;
+      min-width: 180px;
+      padding: 7px 0;
     }
-    .actions button:hover { opacity: 0.9; }
-    #transactions {
-      list-style: none; margin-top: 10px; max-height: 200px; overflow-y: auto;
+    .dropdown .action-btn { border-radius: 0; width: 100%; justify-content: flex-start; }
+    .dropdown .action-btn:last-child { border-radius: 0 0 var(--dropdown-radius) var(--dropdown-radius); }
+    .more-btn {
+      background: var(--neutral);
+      color: #fff;
+      border: none;
+      border-radius: var(--btn-radius);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      display: flex; align-items: center; gap: 7px;
+      cursor: pointer;
+      box-shadow: var(--btn-shadow);
+      transition: background 0.2s, transform 0.15s;
+      position: relative;
     }
-    #transactions li {
-      padding: 10px; 
-      border-bottom: 1px solid var(--text); 
-      opacity: 0.2;
-      display: flex;
-      justify-content: space-between; 
-      align-items: center;
+    .more-btn.active, .more-btn:hover { background: var(--accent); }
+    /* רשימת הוצאות */
+    .expense-list {
+      display: flex; flex-direction: column; gap: var(--expense-list-gap);
+      margin-top: 10px;
+      padding: 0;
+      list-style: none;
     }
-    #transactions li span {
+    .expense-item {
+      background: var(--expense-card-bg);
+      border-radius: var(--expense-card-radius);
+      box-shadow: var(--expense-card-shadow);
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 1.05rem;
       color: var(--text);
-      opacity: 0.7;
+      position: relative;
+      min-width: 0;
     }
+    .expense-item .expense-icon {
+      font-size: var(--expense-icon-size);
+      margin-left: 7px;
+      flex-shrink: 0;
+    }
+    .expense-item .expense-cat {
+      font-weight: 700;
+      margin-left: 7px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .expense-item .expense-amount {
+      font-weight: 700;
+      color: #ffb300;
+      margin-left: 7px;
+      flex-shrink: 0;
+    }
+    .expense-item .expense-date {
+      font-size: 0.93em;
+      color: #bbb;
+      margin-right: auto;
+      flex-shrink: 0;
+    }
+    /* Responsive */
+    @media (max-width: 700px) {
+      #chart-container { max-width: 220px; }
+      .card { padding: 18px 6px 14px 6px; }
+      header { padding: 0 8px; }
+      .add-expense-card { padding: 12px 4px 8px 4px; }
+    }
+    @media (max-width: 500px) {
+      .actions-bar { flex-wrap: nowrap; overflow-x: auto; gap: 7px; }
+      .more-btn { min-width: 120px; }
+      .dropdown { display: flex; position: fixed; left: 10px; right: 10px; top: auto; bottom: 70px; }
+    }
+    /* Footer */
+    footer {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--footer);
+      opacity: var(--footer-opacity);
+      margin-top: 40px;
+      letter-spacing: 0.03em;
+      padding-bottom: 10px;
+    }
+    /* Toast */
     .toast {
       position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: #ff4444; color: #fff; padding: 10px 20px; border-radius: 4px;
+      background: var(--danger); color: #fff; padding: 10px 20px; border-radius: 4px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3); opacity: 0; pointer-events: none;
       transition: opacity 0.3s;
+      z-index: 1000;
     }
     .toast.show { opacity: 1; pointer-events: auto; }
-    footer { text-align: center; margin-top: 30px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <header>
+    <span class="header-icon"><i class="fas fa-chart-pie"></i></span>
     <h1>ניהול תקציב</h1>
-    <!-- Link to categories page -->
-    <a href="categories.html" class="theme-toggle" title="גרפי קטגוריות">
-      <span>📊</span>
-    </a>
-    <button id="themeToggle" class="theme-toggle" title="מעבר מצב">
-      <span>🌓</span>
-    </button>
+    <a href="categories.html" class="cat-toggle" title="גרפי קטגוריות"><i class="fas fa-th-large"></i></a>
+    <button id="themeToggle" class="theme-toggle" title="מעבר מצב"><i class="fas fa-moon"></i></button>
   </header>
   <section class="card">
-    <div class="actions">
-      <select id="categorySelect">
-        <option value="שכר דירה">שכר דירה</option>
-        <option value="חשבונות">חשבונות</option>
-        <option value="דלק">דלק</option>
-        <option value="גז (גפ״מ)">גז (גפ״מ)</option>
-        <option value="אוכל">אוכל</option>
-        <option value="בילויים">בילויים</option>
-        <option value="ביגוד">ביגוד</option>
-        <option value="פינוקים">פינוקים</option>
-        <option value="כללי">כללי</option>
-      </select>
-      <input type="text" id="expenseDescInput" placeholder="תיאור הוצאה">
-      <input type="number" id="expenseInput" placeholder="סכום הוצאה" min="0">
-      <button id="addExpenseBtn">➕ הוסף הוצאה</button>
-    </div>
-    <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
-    <!-- Main chart -->
+    <div class="status-budget" id="statusText">0 מתוך 0 ₪</div>
     <div id="chart-container">
-      <p id="capitalText">ההון שלך הוא: 0 ₪</p>
       <canvas id="expenseChart"></canvas>
-      <p id="statusText">0 מתוך 0 ₪</p>
+      <p id="capitalText">ההון שלך הוא: 0 ₪</p>
     </div>
-    <hr style="border: none; height: 1px; background-color: var(--text); opacity: 0.1; margin: 20px 0;">
-    <!-- budget and general actions -->
-    <div class="actions">
-      <input type="number" id="capitalInput" placeholder="הגדר הון התחלתי" min="0">
-      <button id="setCapitalBtn">הגדר הון</button>
-      <input type="number" id="maxInput" placeholder="הגדר מקסימום" min="0">
-      <button id="setMaxBtn">🧾 הגדר תקציב</button>
-      <button id="resetBtn">🔄 איפוס</button>
-      <button id="exportBtn">📤 ייצא CSV</button>
+    <div class="add-expense-card">
+      <div class="add-expense-row">
+        <span class="icon-emoji">📝</span>
+        <input type="text" id="expenseDescInput" placeholder="תיאור הוצאה">
+      </div>
+      <div class="add-expense-row">
+        <span class="icon-emoji">💰</span>
+        <input type="number" id="expenseInput" placeholder="סכום הוצאה" min="0">
+      </div>
+      <div class="add-expense-row">
+        <span class="icon-emoji">🗂️</span>
+        <select id="categorySelect">
+          <option value="שכר דירה">שכר דירה</option>
+          <option value="חשבונות">חשבונות</option>
+          <option value="דלק">דלק</option>
+          <option value="גז (גפ״מ)">גז (גפ״מ)</option>
+          <option value="אוכל">אוכל</option>
+          <option value="בילויים">בילויים</option>
+          <option value="ביגוד">ביגוד</option>
+          <option value="פינוקים">פינוקים</option>
+          <option value="כללי">כללי</option>
+        </select>
+      </div>
+      <button id="addExpenseBtn" class="add-expense-btn"><i class="fas fa-plus"></i> הוסף הוצאה</button>
+    </div>
+    <div class="actions-bar" id="actionsBar">
+      <input type="number" id="capitalInput" placeholder="הגדר הון התחלתי" min="0" style="max-width:120px;">
+      <button id="setCapitalBtn" class="action-btn"><i class="fas fa-coins"></i> הגדר הון</button>
+      <input type="number" id="maxInput" placeholder="הגדר מקסימום" min="0" style="max-width:120px;">
+      <button id="setMaxBtn" class="action-btn"><i class="fas fa-wallet"></i> הגדר תקציב</button>
+      <button id="resetBtn" class="action-btn"><i class="fas fa-undo"></i> איפוס</button>
+      <button id="exportBtn" class="action-btn"><i class="fas fa-file-csv"></i> ייצא CSV</button>
+      <button id="backupBtn" class="action-btn"><i class="fas fa-save"></i> גיבוי</button>
+      <button id="restoreBtn" class="action-btn"><i class="fas fa-folder-open"></i> שחזור</button>
+      <button id="moreBtn" class="more-btn"><i class="fas fa-ellipsis-h"></i> אפשרויות נוספות</button>
+      <div class="dropdown" id="dropdownMenu">
+        <button id="resetBtnDropdown" class="action-btn"><i class="fas fa-undo"></i> איפוס</button>
+        <button id="exportBtnDropdown" class="action-btn"><i class="fas fa-file-csv"></i> ייצא CSV</button>
+        <button id="backupBtnDropdown" class="action-btn"><i class="fas fa-save"></i> גיבוי</button>
+        <button id="restoreBtnDropdown" class="action-btn"><i class="fas fa-folder-open"></i> שחזור</button>
+      </div>
     </div>
   </section>
   <section class="card">
-    <h2>תנועות אחרונות</h2>
-    <ul id="transactions"></ul>
+    <h2 style="margin-bottom:18px;">תנועות אחרונות</h2>
+    <ul class="expense-list" id="transactions"></ul>
+  </section>
+  <!-- הוצאות קבועות -->
+  <section class="card" id="fixedExpensesSection">
+    <h2 style="margin-bottom:18px;">הוצאות קבועות</h2>
+    <form id="addFixedExpenseForm" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
+      <span class="icon-emoji">📝</span>
+      <input type="text" id="fixedDescInput" placeholder="תיאור הוצאה קבועה" style="flex:1;min-width:120px;">
+      <span class="icon-emoji">💰</span>
+      <input type="number" id="fixedAmountInput" placeholder="סכום" min="0" style="width:100px;">
+      <button type="submit" class="add-expense-btn" style="padding:8px 18px;"><i class="fas fa-plus"></i> הוסף קבועה</button>
+    </form>
+    <ul id="fixedExpensesList" class="expense-list"></ul>
   </section>
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
+    // קטגוריות עם אייקונים ואימוג'י
+    const categoryIcons = {
+      'שכר דירה': { icon: 'fa-house', emoji: '🏠', color: '#ffb300' },
+      'חשבונות': { icon: 'fa-file-invoice', emoji: '💡', color: '#00bcd4' },
+      'דלק': { icon: 'fa-gas-pump', emoji: '⛽', color: '#ff7043' },
+      'גז (גפ״מ)': { icon: 'fa-fire', emoji: '🔥', color: '#ff5252' },
+      'אוכל': { icon: 'fa-utensils', emoji: '🛒', color: '#43a047' },
+      'בילויים': { icon: 'fa-glass-cheers', emoji: '🎉', color: '#7e57c2' },
+      'ביגוד': { icon: 'fa-tshirt', emoji: '👕', color: '#29b6f6' },
+      'פינוקים': { icon: 'fa-ice-cream', emoji: '🍦', color: '#f06292' },
+      'כללי': { icon: 'fa-ellipsis-h', emoji: '📦', color: '#607d8b' }
+    };
     // data & storage
     let maxBudget = 0, current = 0, capital = 0;
     let transactions = [];
+    let fixedExpenses = [];
     function saveData() {
-      localStorage.setItem('budgetData', JSON.stringify({maxBudget, transactions, capital}));
+      localStorage.setItem('budgetData', JSON.stringify({maxBudget, transactions, capital, fixedExpenses}));
     }
     function loadData() {
       const saved = JSON.parse(localStorage.getItem('budgetData'));
       if(saved) {
         maxBudget = saved.maxBudget;
         transactions = saved.transactions;
+        fixedExpenses = saved.fixedExpenses || [];
         current = transactions.filter(t=>t.type==='expense').reduce((sum,t)=>sum+t.amount,0);
         if(saved.capital !== undefined) capital = saved.capital;
       }
@@ -177,18 +404,20 @@
     // setup charts
     const expenseCtx = document.getElementById('expenseChart').getContext('2d');
     const data = { datasets:[{data:[0,0], backgroundColor:['var(--accent)', '#424242'], borderWidth:0}]};
-    const options = { cutout:'70%', responsive:true, animation:{duration:800,easing:'easeOutQuart'}, plugins:{legend:{display:false}, tooltip:{enabled:true}} };
+    const options = { cutout:'70%', responsive:true, animation:{duration:1200,easing:'easeOutQuart'}, plugins:{legend:{display:false}, tooltip:{enabled:true}} };
     const centerTextPlugin = { 
       id:'centerText', 
       beforeDraw(chart) { 
         const{ctx,chartArea:{width,height,left,top}}=chart; 
         ctx.save(); 
-        ctx.font='bold 20px Assistant'; 
-        // Use current computed style to get the latest text color
+        ctx.font='bold 22px Assistant'; 
         ctx.fillStyle=getComputedStyle(document.documentElement).getPropertyValue('--text'); 
         ctx.textAlign='center'; 
         ctx.textBaseline='middle'; 
-        ctx.fillText(`${current}/${maxBudget}`, left+width/2, top+height/2); 
+        let fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
+        ctx.fillText(`נשאר לך: ${maxBudget-current-fixedSum} ₪`, left+width/2, top+height/2-10);
+        ctx.font='16px Assistant';
+        ctx.fillText(`מתוך ${maxBudget} ₪`, left+width/2, top+height/2+16);
         ctx.restore(); 
       } 
     };
@@ -204,28 +433,50 @@
         toast.classList.remove('show');
       }, 3000);
     }
-    function updateStatusText() { document.getElementById('statusText').textContent=`${current} מתוך ${maxBudget} ₪`; }
+    function updateStatusText() {
+      let fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
+      let percent = maxBudget ? (current + fixedSum) / maxBudget : 0;
+      let status = 'status-green';
+      if (percent > 0.9) status = 'status-red';
+      else if (percent > 0.6) status = 'status-orange';
+      document.getElementById('statusText').className = 'status-budget ' + status;
+      document.getElementById('statusText').textContent = `נשאר לך: ${maxBudget-current-fixedSum} ₪ מתוך ${maxBudget} ₪`;
+    }
     function updateCapitalText() { document.getElementById('capitalText').textContent=`ההון שלך הוא: ${capital} ₪`; }
     function updateTransactionsList() {
       transactionsList.innerHTML='';
-      // Show all transactions in reverse chronological order
       transactions.slice().reverse().forEach(t=>{
         const li=document.createElement('li');
+        li.className = 'expense-item';
+        const cat = categoryIcons[t.category] || {icon:'fa-question',emoji:'❓',color:'#888'};
         const dt = t.date ? t.date.replace('T', ' ') : 'תאריך לא ידוע';
-        li.innerHTML=`${t.type==='expense'?'💸':'💰'} ${t.desc} – ${t.amount}₪ <span style='font-size:0.8rem'>(${dt})</span>`;
+        li.innerHTML = `
+          <span class="expense-icon" style="color:${cat.color}"><i class="fas ${cat.icon}"></i> ${cat.emoji}</span>
+          <span class="expense-cat">${t.category}</span>
+          <span class="expense-amount">${t.amount} ₪</span>
+          <span>${t.desc}</span>
+          <span class="expense-date">${dt}</span>
+        `;
         transactionsList.append(li);
       });
     }
-    function updateExpenseChart() { const p=Math.min(Math.max(current/maxBudget,0),1); const red=Math.floor(p*255),green=Math.floor((1-p)*255); expenseChart.data.datasets[0].data=[current,Math.max(maxBudget-current,0)]; expenseChart.data.datasets[0].backgroundColor[0]=`rgb(${red},${green},0)`; expenseChart.update(); }
-    function updateAll() { updateStatusText(); updateCapitalText(); updateExpenseChart(); updateTransactionsList(); }
+    function updateExpenseChart() {
+      let fixedSum = fixedExpenses.reduce((s, f) => s + Number(f.amount), 0);
+      let percent = maxBudget ? (current + fixedSum) / maxBudget : 0;
+      let color = '#00c851';
+      if (percent > 0.9) color = '#ff4444';
+      else if (percent > 0.6) color = '#ff9800';
+      expenseChart.data.datasets[0].data=[fixedSum, current, Math.max(maxBudget-current-fixedSum,0)];
+      expenseChart.data.datasets[0].backgroundColor=["#888", color, "#424242"];
+      expenseChart.update();
+    }
+    function updateAll() { updateStatusText(); updateCapitalText(); updateExpenseChart(); updateTransactionsList(); updateFixedExpensesList(); }
     // events
     document.getElementById('setMaxBtn').addEventListener('click',()=>{ const val=+document.getElementById('maxInput').value; if(val>0){ maxBudget=val; current=0; transactions=[]; saveData(); updateAll(); showToast('תקציב הוגדר!'); }});
     document.getElementById('addExpenseBtn').addEventListener('click', () => {
       const desc = document.getElementById('expenseDescInput').value.trim();
       const category = categorySelect.value;
-      // Get current time in Israel timezone
       const now = new Date();
-      // Format manually to avoid timezone issues
       const pad = num => String(num).padStart(2, '0');
       const year = now.getFullYear();
       const month = pad(now.getMonth() + 1);
@@ -247,11 +498,16 @@
         showToast('אנא מלא תיאור וסכום');
       }
     });
-    document.getElementById('resetBtn').addEventListener('click',()=>{ current=0; transactions=[]; saveData(); updateAll(); });
-    document.getElementById('exportBtn').addEventListener('click',()=>{ let csv='type,desc,amount,date\n'; transactions.forEach(t=>csv+=`${t.type},${t.desc},${t.amount},${t.date}\n`); const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='transactions.csv'; a.click(); URL.revokeObjectURL(url); });
+    function handleActionBtn(id, fn) {
+      document.getElementById(id).addEventListener('click', fn);
+      document.getElementById(id+'Dropdown').addEventListener('click', fn);
+    }
+    handleActionBtn('resetBtn',()=>{ current=0; transactions=[]; saveData(); updateAll(); });
+    handleActionBtn('exportBtn',()=>{ let csv='type,desc,amount,date\n'; transactions.forEach(t=>csv+=`${t.type},${t.desc},${t.amount},${t.date}\n`); const blob=new Blob([csv],{type:'text/csv'}), url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='transactions.csv'; a.click(); URL.revokeObjectURL(url); });
     document.getElementById('themeToggle').addEventListener('click',()=>{
       document.documentElement.classList.toggle('light-theme');
-      // Update charts to reflect theme change
+      const icon = document.querySelector('#themeToggle i');
+      icon.className = document.documentElement.classList.contains('light-theme') ? 'fas fa-sun' : 'fas fa-moon';
       updateAll();
     });
     document.getElementById('setCapitalBtn').addEventListener('click', () => {
@@ -266,14 +522,8 @@
         showToast('אנא הזן ערך הון חוקי');
       }
     });
-    // Create backup & restore buttons and add them to the actions
-    const actionsDiv = document.querySelector('.actions:last-of-type');
-    
-    const backupBtn = document.createElement('button');
-    backupBtn.textContent = '💾 גיבוי';
-    backupBtn.addEventListener('click', () => {
-      // Create JSON backup of all data
-      const backupData = JSON.stringify({maxBudget, transactions});
+    handleActionBtn('backupBtn', () => {
+      const backupData = JSON.stringify({maxBudget, transactions, capital, fixedExpenses});
       const blob = new Blob([backupData], {type: 'application/json'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -283,25 +533,18 @@
       URL.revokeObjectURL(url);
       showToast('גיבוי נוצר בהצלחה!');
     });
-    actionsDiv.appendChild(backupBtn);
-    
-    const restoreBtn = document.createElement('button');
-    restoreBtn.textContent = '📂 שחזור';
-    restoreBtn.addEventListener('click', () => {
-      // Create a file input element
+    handleActionBtn('restoreBtn', () => {
       const fileInput = document.createElement('input');
       fileInput.type = 'file';
       fileInput.accept = '.json';
       fileInput.style.display = 'none';
       document.body.appendChild(fileInput);
-      
       fileInput.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) {
           document.body.removeChild(fileInput);
           return;
         }
-        
         const reader = new FileReader();
         reader.onload = (event) => {
           try {
@@ -309,6 +552,8 @@
             if (data && data.maxBudget !== undefined && Array.isArray(data.transactions)) {
               maxBudget = data.maxBudget;
               transactions = data.transactions;
+              capital = data.capital || 0;
+              fixedExpenses = data.fixedExpenses || [];
               current = transactions.filter(t=>t.type==='expense').reduce((sum,t)=>sum+t.amount,0);
               saveData();
               updateAll();
@@ -323,10 +568,79 @@
         };
         reader.readAsText(file);
       });
-      
       fileInput.click();
     });
-    actionsDiv.appendChild(restoreBtn);
+    // More options dropdown (mobile)
+    const moreBtn = document.getElementById('moreBtn');
+    const dropdown = document.getElementById('dropdownMenu');
+    let dropdownOpen = false;
+    moreBtn.addEventListener('click', () => {
+      dropdownOpen = !dropdownOpen;
+      dropdown.style.display = dropdownOpen ? 'flex' : 'none';
+      moreBtn.classList.toggle('active', dropdownOpen);
+    });
+    document.body.addEventListener('click', (e) => {
+      if (dropdownOpen && !moreBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdownOpen = false;
+        dropdown.style.display = 'none';
+        moreBtn.classList.remove('active');
+      }
+    }, true);
+    // הוצאות קבועות - UI
+    function updateFixedExpensesList() {
+      const ul = document.getElementById('fixedExpensesList');
+      ul.innerHTML = '';
+      if (!fixedExpenses.length) {
+        ul.innerHTML = '<li style="color:#bbb;text-align:center;">לא הוגדרו הוצאות קבועות</li>';
+        return;
+      }
+      fixedExpenses.forEach((f, i) => {
+        const li = document.createElement('li');
+        li.className = 'expense-item';
+        li.innerHTML = `
+          <span class="expense-icon" style="color:#888"><i class="fas fa-thumbtack"></i></span>
+          <span class="expense-cat">${f.desc}</span>
+          <span class="expense-amount">${f.amount} ₪</span>
+          <button class="action-btn edit-fixed" style="background:#1976d2;padding:4px 10px;font-size:0.95em;">ערוך</button>
+          <button class="action-btn delete-fixed" style="background:#ff4444;padding:4px 10px;font-size:0.95em;">מחק</button>
+        `;
+        li.querySelector('.edit-fixed').onclick = () => {
+          const newDesc = prompt('ערוך תיאור:', f.desc);
+          const newAmount = +prompt('ערוך סכום:', f.amount);
+          if (newDesc && newAmount > 0) {
+            f.desc = newDesc;
+            f.amount = newAmount;
+            saveData();
+            updateAll();
+            showToast('עודכן!');
+          }
+        };
+        li.querySelector('.delete-fixed').onclick = () => {
+          if (confirm('למחוק הוצאה קבועה זו?')) {
+            fixedExpenses.splice(i, 1);
+            saveData();
+            updateAll();
+            showToast('נמחק!');
+          }
+        };
+        ul.appendChild(li);
+      });
+    }
+    document.getElementById('addFixedExpenseForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const desc = document.getElementById('fixedDescInput').value.trim();
+      const amount = +document.getElementById('fixedAmountInput').value;
+      if (desc && amount > 0) {
+        fixedExpenses.push({ desc, amount });
+        saveData();
+        updateAll();
+        document.getElementById('fixedDescInput').value = '';
+        document.getElementById('fixedAmountInput').value = '';
+        showToast('הוצאה קבועה נוספה!');
+      } else {
+        showToast('אנא מלא תיאור וסכום תקינים');
+      }
+    });
     // init
     loadData(); updateAll();
   </script>
