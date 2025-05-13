@@ -274,7 +274,19 @@
     @media (max-width: 500px) {
       .actions-bar { flex-wrap: nowrap; overflow-x: auto; gap: 7px; }
       .more-btn { min-width: 120px; }
-      .dropdown { display: flex; position: fixed; left: 10px; right: 10px; top: auto; bottom: 70px; }
+      .dropdown {
+        display: none;
+        position: fixed;
+        left: 10px; right: 10px; bottom: 70px;
+        z-index: 1001;
+      }
+      body.dropdown-open::after {
+        content: '';
+        position: fixed;
+        left: 0; top: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.25);
+        z-index: 1000;
+      }
     }
     /* Footer */
     footer {
@@ -574,18 +586,32 @@
     const moreBtn = document.getElementById('moreBtn');
     const dropdown = document.getElementById('dropdownMenu');
     let dropdownOpen = false;
-    moreBtn.addEventListener('click', () => {
+    moreBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
       dropdownOpen = !dropdownOpen;
       dropdown.style.display = dropdownOpen ? 'flex' : 'none';
       moreBtn.classList.toggle('active', dropdownOpen);
+      if (dropdownOpen) {
+        document.body.classList.add('dropdown-open');
+      } else {
+        document.body.classList.remove('dropdown-open');
+      }
     });
+    function closeDropdown() {
+      dropdownOpen = false;
+      dropdown.style.display = 'none';
+      moreBtn.classList.remove('active');
+      document.body.classList.remove('dropdown-open');
+    }
     document.body.addEventListener('click', (e) => {
       if (dropdownOpen && !moreBtn.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdownOpen = false;
-        dropdown.style.display = 'none';
-        moreBtn.classList.remove('active');
+        closeDropdown();
       }
     }, true);
+    window.addEventListener('scroll', closeDropdown, true);
+    dropdown.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', closeDropdown);
+    });
     // הוצאות קבועות - UI
     function updateFixedExpensesList() {
       const ul = document.getElementById('fixedExpensesList');
