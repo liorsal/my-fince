@@ -101,6 +101,12 @@ h1 {
   overflow: visible;
   box-sizing: border-box;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .cat-toggle {
@@ -114,10 +120,6 @@ h1 {
   height: 12px;
   border-radius: 50%;
   background: white;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 
 .settings-toggle {
@@ -125,12 +127,10 @@ h1 {
 }
 
 .settings-toggle i {
-  font-size: 1.3rem;
+  font-size: 20px;
   color: #fff;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;

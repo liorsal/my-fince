@@ -50,50 +50,7 @@
       right: 0;
     }
     
-    /* Make buttons perfect circles */
-    .cat-toggle, .settings-toggle {
-      width: 44px; 
-      height: 44px; 
-      border-radius: 50%; 
-      margin: 0 0 0 10px;
-      padding: 0;
-      overflow: visible;
-      box-sizing: border-box;
-      position: relative;
-    }
-
-    .cat-toggle {
-      background: #ff9800;
-    }
-
-    .cat-toggle::after {
-      content: "";
-      display: block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: white;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-
-    .settings-toggle {
-      background: #1976d2;
-    }
-
-    .settings-toggle i {
-      color: #fff;
-      font-size: 1.3rem;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    /* Using global button styles from styles.css */
     
     .status-budget {
       font-size: var(--status-size);
