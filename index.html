@@ -310,12 +310,12 @@
         </div>
         <div class="add-expense-card">
           <div class="add-expense-row">
-            <span class="icon-emoji">📝</span>
-            <input type="text" id="expenseDescInput" placeholder="תיאור הוצאה">
-          </div>
-          <div class="add-expense-row">
             <span class="icon-emoji">💰</span>
             <input type="number" id="expenseInput" placeholder="סכום הוצאה" min="0">
+          </div>
+          <div class="add-expense-row">
+            <span class="icon-emoji">📝</span>
+            <input type="text" id="expenseDescInput" placeholder="תיאור הוצאה">
           </div>
           <div class="add-expense-row">
             <span class="icon-emoji">🗂️</span>
@@ -343,12 +343,12 @@
         <h2 style="margin-bottom:18px;">הוצאות קבועות</h2>
         <form id="addFixedExpenseForm" class="fixed-expense-form" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;">
           <div class="fixed-expense-input-group">
-            <span class="icon-emoji">📝</span>
-            <input type="text" id="fixedDescInput" placeholder="תיאור הוצאה קבועה" style="flex:1;min-width:120px;">
-          </div>
-          <div class="fixed-expense-input-group">
             <span class="icon-emoji">💰</span>
             <input type="number" id="fixedAmountInput" placeholder="סכום" min="0" style="width:100px;">
+          </div>
+          <div class="fixed-expense-input-group">
+            <span class="icon-emoji">📝</span>
+            <input type="text" id="fixedDescInput" placeholder="תיאור הוצאה קבועה" style="flex:1;min-width:120px;">
           </div>
           <button type="submit" id="addFixedExpenseBtn" class="add-expense-btn" style="padding:8px 18px;"><i class="fas fa-plus"></i> הוסף קבועה</button>
         </form>

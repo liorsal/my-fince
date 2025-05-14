@@ -324,8 +324,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         <canvas id="${canvasId}"></canvas>
         <div class="cat-actions">
-          <input type="text" placeholder="תיאור הוצאה" class="cat-desc-input">
           <input type="number" placeholder="סכום" class="cat-amount-input">
+          <input type="text" placeholder="תיאור הוצאה" class="cat-desc-input">
           <button class="addCatExpenseBtn" data-category="${catName}"><i class="fas fa-plus"></i> הוסף הוצאה</button>
         </div>
         <ul class="cat-expense-list" id="expense-list-${catName}"></ul>
